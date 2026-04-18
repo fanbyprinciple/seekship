@@ -34,7 +34,7 @@ export default function PanicOverlay({ panic, isMe, partnerName, onDismiss }: Pr
         <p className={styles.causeLabel}>{CAUSE_LABELS[panic.cause].toUpperCase()}</p>
         <p className={styles.message}>{msg}</p>
         <button className={styles.dismissBtn} onClick={onDismiss}>
-          I am okay now
+          Everything is under control
         </button>
       </div>
     </div>

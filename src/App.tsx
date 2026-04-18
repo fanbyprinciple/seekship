@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { usePartner } from './hooks/usePartner'
+import { useNotifications } from './hooks/useNotifications'
 import Login from './pages/Login'
 import Invite from './pages/Invite'
 import Home from './pages/Home'
@@ -16,6 +17,7 @@ import Settings from './pages/Settings'
 function AppRoutes() {
   const { user, loading: authLoading } = useAuth()
   const { userData, loading: partnerLoading } = usePartner(user?.uid)
+  useNotifications(user?.uid)
 
   if (authLoading || (user && partnerLoading)) return <LoadingScreen />
 
