@@ -1,34 +1,31 @@
-// Firebase Messaging Service Worker
-// Handles background push notifications when app is not in foreground
-
 importScripts('https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js')
 importScripts('https://www.gstatic.com/firebasejs/11.0.0/firebase-messaging-compat.js')
 
-// Firebase config injected at runtime via postMessage from the main app
-// or you can hardcode it here (it's not secret — these are public keys)
-let messaging = null
+firebase.initializeApp({
+  apiKey: 'AIzaSyBukjka4ltMt_ODPVDnHsgNZ15H-f--xNM',
+  authDomain: 'seekship.firebaseapp.com',
+  projectId: 'seekship',
+  storageBucket: 'seekship.firebasestorage.app',
+  messagingSenderId: '273649514086',
+  appId: '1:273649514086:web:60156edf65ef8ff2659fa7',
+})
 
-self.addEventListener('message', (event) => {
-  if (event.data?.type === 'FIREBASE_CONFIG') {
-    firebase.initializeApp(event.data.config)
-    messaging = firebase.messaging()
+const messaging = firebase.messaging()
 
-    messaging.onBackgroundMessage((payload) => {
-      const { title, body } = payload.notification ?? {}
-      self.registration.showNotification(title ?? 'Seekship', {
-        body: body ?? 'Your partner sent you a message.',
-        icon: '/seekship/heart.svg',
-        badge: '/seekship/heart.svg',
-        data: { url: '/seekship/message' },
-        requireInteraction: true, // keeps notification visible until user interacts
-      })
-    })
-  }
+messaging.onBackgroundMessage((payload) => {
+  const { title, body } = payload.notification ?? {}
+  self.registration.showNotification(title ?? 'Seekship', {
+    body: body ?? 'Your partner needs you.',
+    icon: '/seekship/heart.svg',
+    badge: '/seekship/heart.svg',
+    data: { url: payload.fcmOptions?.link ?? '/seekship/home' },
+    requireInteraction: true,
+  })
 })
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const url = event.notification.data?.url ?? '/seekship/message'
+  const url = event.notification.data?.url ?? '/seekship/home'
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
