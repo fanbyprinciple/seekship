@@ -1,0 +1,31 @@
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper-dark);
+}
+
+.link, .active {
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px;
+  border: 2px solid transparent;
+  transition: all 0.1s;
+}
+
+.link:hover {
+  background: var(--paper);
+  border-color: var(--ink);
+}
+
+.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink-light);
+}

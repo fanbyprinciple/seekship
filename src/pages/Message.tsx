@@ -14,6 +14,7 @@ import {
 import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
+import Nav from '../components/Nav'
 import styles from './Message.module.css'
 
 export default function Message() {
@@ -23,7 +24,6 @@ export default function Message() {
 
   const partnerId: string | undefined = userData?.partnerId
 
-  // Listen for unacknowledged messages sent TO this user
   useEffect(() => {
     if (!user?.uid || !partnerId) return
 
@@ -36,7 +36,7 @@ export default function Message() {
       limit(1)
     )
 
-    const unsub = onSnapshot(q, (snap) => {
+    return onSnapshot(q, (snap) => {
       if (!snap.empty) {
         const d = snap.docs[0]
         setIncomingMessage({ id: d.id, ...d.data() })
@@ -44,8 +44,6 @@ export default function Message() {
         setIncomingMessage(null)
       }
     })
-
-    return unsub
   }, [user?.uid, partnerId])
 
   const acknowledge = async () => {
@@ -57,24 +55,25 @@ export default function Message() {
     setIncomingMessage(null)
   }
 
-  if (!incomingMessage) {
-    return (
-      <div className={styles.empty}>
-        <p>No new messages.</p>
-        <p className={styles.hint}>When your partner sends you a message, it will appear here.</p>
-      </div>
-    )
-  }
-
   return (
-    <div className={styles.fullscreen}>
-      <div className={styles.content}>
-        <p className={styles.from}>from your partner</p>
-        <p className={styles.messageText}>{incomingMessage.text as string}</p>
-        <button className={styles.ackBtn} onClick={() => void acknowledge()}>
-          Tap to acknowledge
-          <span className={styles.heart}>♥</span>
-        </button>
+    <div className={styles.page}>
+      <Nav />
+      <div className={styles.fullscreen}>
+        {!incomingMessage ? (
+          <div className={styles.empty}>
+            <p>No new messages ♥</p>
+            <p className={styles.hint}>When your partner sends a note, it will appear here.</p>
+          </div>
+        ) : (
+          <div className={styles.card}>
+            <p className={styles.from}>from your partner</p>
+            <p className={styles.messageText}>{incomingMessage.text as string}</p>
+            <button className={styles.ackBtn} onClick={() => void acknowledge()}>
+              Tap to acknowledge
+              <span className={styles.heart}>♥</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

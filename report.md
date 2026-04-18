@@ -11,18 +11,49 @@
 | Firebase project created | ✅ Done |
 | Web app registered | ✅ Done |
 | Firestore database created (nam5/us-central) | ✅ Done |
-| Firestore security rules deployed | ✅ Done |
+| Firestore security rules deployed (incl. checklist) | ✅ Done |
 | `.env.local` written with config keys | ✅ Done |
+| Git checkpoint committed | ✅ Done |
+| Pencil sketch theme applied across all pages | ✅ Done |
+| Shared checklist feature built | ✅ Done |
+| GitHub Actions deploy workflow ready | ✅ Done |
 
-## What you must do manually (1 step, ~1 min)
+## What you must do manually
 
-### Enable Google Sign-In
-1. Go to https://console.firebase.google.com/project/seekship/authentication/providers
-2. Click **Google** → toggle Enable → save
+### 1. Enable Google Sign-In (required, ~1 min)
+Go to https://console.firebase.google.com/project/seekship/authentication/providers
+→ Click **Google** → toggle Enable → save
 
-That's it. This cannot be done via CLI.
+### 2. GitHub deploy (after `gh auth login` in Terminal)
+Claude will run these automatically once authenticated:
+```
+gh repo create seekship --public
+git remote add origin https://github.com/fanbyprinciple/seekship.git
+git push -u origin main
+```
+Then add GitHub secrets in repo Settings → Secrets → Actions.
 
-## .env.local values (already written to file)
+### 3. Add GitHub Pages domain to Firebase (after deploy)
+Firebase Console → Authentication → Authorized Domains → Add:
+```
+fanbyprinciple.github.io
+```
+
+## App at a glance
+
+| Page | Route | What it does |
+|------|-------|-------------|
+| Login | `/` | Google sign-in |
+| Invite | auto | Link with partner via 6-char code |
+| Message (send) | `/home` | Type + send note to partner |
+| Message (inbox) | `/message` | View + acknowledge partner's message |
+| Shared Checklist | `/checklist` | Real-time shared to-do list |
+
+## Theme
+Pencil sketch style — cream paper background, Caveat handwriting font, rough sketch borders, charcoal ink colors.
+Reference image welcome if you want to adjust.
+
+## .env.local values (already in file)
 ```
 VITE_FIREBASE_API_KEY=AIzaSyBukjka4ltMt_ODPVDnHsgNZ15H-f--xNM
 VITE_FIREBASE_AUTH_DOMAIN=seekship.firebaseapp.com
@@ -30,23 +61,10 @@ VITE_FIREBASE_PROJECT_ID=seekship
 VITE_FIREBASE_STORAGE_BUCKET=seekship.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=273649514086
 VITE_FIREBASE_APP_ID=1:273649514086:web:60156edf65ef8ff2659fa7
-VITE_FIREBASE_VAPID_KEY=          ← fill this later (FCM push, Feature 3)
+VITE_FIREBASE_VAPID_KEY=          ← fill later (push notifications, Feature 3)
 ```
 
-## Firestore Security Rules (deployed)
-- Users can read/write only their own doc
-- Any authenticated user can read partner's doc (needed for partner linking)
-- Invite codes readable/writable by any authenticated user
-- Messages readable/writable only by sender or recipient
-
-## Next Steps
-1. Enable Google Auth (link above, 1 min)
-2. Run `npm run dev` → test login at http://localhost:5173/seekship/
-3. Verify user doc appears in Firestore Console after login
-4. Once verified → build Feature 2 (partner invite)
-
-## GitHub Pages (after GitHub repo created)
-Add these as Repository Secrets (Settings → Secrets → Actions):
+## GitHub Repository Secrets needed (for Actions deploy)
 ```
 VITE_FIREBASE_API_KEY
 VITE_FIREBASE_AUTH_DOMAIN
@@ -56,4 +74,9 @@ VITE_FIREBASE_MESSAGING_SENDER_ID
 VITE_FIREBASE_APP_ID
 VITE_FIREBASE_VAPID_KEY
 ```
-Then add `fanbyprinciple.github.io` to Firebase Console → Authentication → Authorized Domains.
+
+## Test locally
+```bash
+npm run dev
+# → http://localhost:5173/seekship/
+```

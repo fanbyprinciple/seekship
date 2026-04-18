@@ -1,6 +1,6 @@
-.container {
+.page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: var(--paper);
   display: flex;
   flex-direction: column;
 }
@@ -9,14 +9,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 20px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper-dark);
 }
 
 .logo {
-  color: #fff;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
+  color: var(--ink);
 }
 
 .userInfo {
@@ -29,16 +30,23 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  border: 2px solid var(--ink);
 }
 
 .logoutBtn {
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.6);
-  border-radius: 8px;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 0.85rem;
+  border: var(--sketch-border);
+  border-radius: 2px 5px 2px 4px / 4px 2px 5px 2px;
+  color: var(--ink);
+  padding: 5px 12px;
+  font-size: 0.95rem;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.logoutBtn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--ink);
 }
 
 .main {
@@ -46,97 +54,117 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 32px 24px;
-  max-width: 520px;
+  padding: 28px 20px;
+  max-width: 540px;
   margin: 0 auto;
   width: 100%;
 }
 
 .greeting {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1.1rem;
-  margin: 0 0 20px;
+  color: var(--ink-light);
+  font-size: 1.15rem;
+  margin: 0 0 16px;
   align-self: flex-start;
 }
 
-.greeting strong { color: #fff; }
+.greeting strong { color: var(--ink); }
+
+.card {
+  background: #fff;
+  border: var(--sketch-border);
+  border-radius: 3px 10px 3px 9px / 8px 3px 9px 3px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 24px;
+  width: 100%;
+}
 
 .textarea {
   width: 100%;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  padding: 18px;
-  color: #fff;
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 6px 2px 5px / 5px 2px 6px 2px;
+  box-shadow: inset 2px 2px 0 var(--paper-dark);
+  padding: 14px;
+  color: var(--ink);
   font-size: 1.1rem;
   line-height: 1.6;
   resize: none;
   outline: none;
-  font-family: inherit;
   box-sizing: border-box;
 }
 
-.textarea:focus { border-color: #e91e8c; }
-.textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+.textarea:focus {
+  box-shadow: inset 2px 2px 0 var(--paper-dark), 0 0 0 3px var(--accent-light);
+}
+
+.textarea::placeholder { color: var(--ink-faint); }
 
 .charCount {
   align-self: flex-end;
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.8rem;
+  color: var(--ink-faint);
+  font-size: 0.9rem;
   margin-top: 6px;
 }
 
 .sendBtn {
-  background: #e91e8c;
-  color: #fff;
-  border: none;
-  border-radius: 14px;
-  padding: 16px 48px;
-  font-size: 1.1rem;
+  background: var(--ink);
+  color: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 8px 2px 7px / 6px 2px 7px 2px;
+  box-shadow: 4px 4px 0 var(--ink-light);
+  padding: 14px 48px;
+  font-size: 1.15rem;
   font-weight: 700;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: opacity 0.15s, transform 0.1s;
+  margin-top: 16px;
   width: 100%;
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
-.sendBtn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.sendBtn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ink-light);
+}
+
+.sendBtn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink-light);
+}
+
 .sendBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .lastMsg {
-  margin-top: 40px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 20px;
+  margin-top: 24px;
+  background: var(--paper-dark);
+  border: 2px dashed var(--ink-faint);
+  border-radius: 3px 8px 3px 7px / 6px 3px 7px 3px;
+  padding: 16px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .lastMsgLabel {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.8rem;
+  color: var(--ink-faint);
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
 }
 
 .lastMsgText {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 1rem;
-  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 1.05rem;
+  margin: 0 0 8px;
   font-style: italic;
 }
 
 .seen {
-  color: #4caf50;
-  font-size: 0.9rem;
+  color: #2e7d32;
+  font-size: 0.95rem;
   margin: 0;
+  font-weight: 600;
 }
 
 .waiting {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.9rem;
+  color: var(--ink-faint);
+  font-size: 0.95rem;
   margin: 0;
 }

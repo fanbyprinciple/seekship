@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Invite from './pages/Invite'
 import Home from './pages/Home'
 import Message from './pages/Message'
+import Checklist from './pages/Checklist'
 
 function AppRoutes() {
   const { user, loading: authLoading } = useAuth()
@@ -35,6 +36,7 @@ function AppRoutes() {
       <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="/home" element={<Home />} />
       <Route path="/message" element={<Message />} />
+      <Route path="/checklist" element={<Checklist />} />
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   )
@@ -47,9 +49,10 @@ function LoadingScreen() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-      color: 'rgba(255,255,255,0.5)',
-      fontSize: '1rem',
+      background: 'var(--paper)',
+      color: 'var(--ink-light)',
+      fontSize: '1.3rem',
+      fontFamily: 'var(--font)',
     }}>
       Loading...
     </div>

@@ -7,9 +7,10 @@ export default function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
+        <span className={styles.heart}>♥</span>
         <h1 className={styles.title}>Seekship</h1>
         <p className={styles.subtitle}>Stay close, no matter the distance.</p>
-        <button className={styles.googleBtn} onClick={loginWithGoogle}>
+        <button className={styles.googleBtn} onClick={() => void loginWithGoogle()}>
           <GoogleIcon />
           Sign in with Google
         </button>
