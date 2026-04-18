@@ -1,31 +1,29 @@
 .nav {
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
+  justify-content: stretch;
   border-bottom: 2px solid var(--ink);
   background: var(--paper-dark);
+  overflow-x: auto;
 }
 
 .link, .active {
+  flex: 1;
   color: var(--ink);
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  padding: 6px 16px;
-  border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px;
-  border: 2px solid transparent;
-  transition: all 0.1s;
+  padding: 10px 6px;
+  text-align: center;
+  border-right: 1px solid var(--ink-faint);
+  white-space: nowrap;
+  transition: background 0.1s;
 }
 
-.link:hover {
-  background: var(--paper);
-  border-color: var(--ink);
-}
+.link:last-child, .active:last-child { border-right: none; }
+
+.link:hover { background: var(--paper); }
 
 .active {
   background: var(--ink);
   color: var(--paper);
-  border-color: var(--ink);
-  box-shadow: 2px 2px 0 var(--ink-light);
 }

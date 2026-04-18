@@ -1,0 +1,152 @@
+.page { min-height: 100vh; background: var(--paper); display: flex; flex-direction: column; }
+
+.container {
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.section {
+  background: #fff;
+  border: var(--sketch-border);
+  border-radius: 3px 10px 4px 9px / 8px 3px 9px 4px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 20px;
+}
+
+.sectionTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 16px;
+  border-bottom: 1px dashed var(--ink-faint);
+  padding-bottom: 10px;
+}
+
+/* Meetup */
+.countdown {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px dashed var(--ink-faint);
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.countNum { font-size: 2.8rem; font-weight: 700; color: var(--accent); display: block; }
+.meetupNote { color: var(--ink-light); font-size: 1rem; margin: 6px 0 0; }
+
+.meetupForm { display: flex; flex-direction: column; gap: 8px; }
+
+.dateInput, .noteInput {
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px;
+  padding: 10px 14px;
+  color: var(--ink);
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.dateInput:focus, .noteInput:focus { box-shadow: 0 0 0 3px var(--accent-light); }
+
+.saveBtn {
+  background: var(--ink);
+  color: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 7px 2px 6px / 5px 2px 6px 2px;
+  box-shadow: 3px 3px 0 var(--ink-light);
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.saveBtn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink-light); }
+
+/* Movies */
+.addForm { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+
+.input {
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px;
+  padding: 10px 14px;
+  color: var(--ink);
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.input::placeholder { color: var(--ink-faint); }
+.input:focus { box-shadow: 0 0 0 3px var(--accent-light); }
+
+.addBtn {
+  background: var(--ink);
+  color: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 7px 2px 6px / 5px 2px 6px 2px;
+  box-shadow: 3px 3px 0 var(--ink-light);
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.addBtn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink-light); }
+
+.filterRow { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.filterBtn {
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 3px 6px 3px 5px;
+  padding: 5px 12px;
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink-faint);
+}
+.filterActive { background: var(--ink); color: var(--paper); box-shadow: 2px 2px 0 var(--ink-light); }
+
+.movieList { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+
+.empty { color: var(--ink-faint); text-align: center; padding: 20px; font-size: 1rem; }
+
+.movieItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--ink-faint);
+  border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px;
+  padding: 10px 12px;
+  background: var(--paper);
+}
+
+.movieInfo { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.movieTitle { font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+.movieNote { font-size: 0.9rem; color: var(--ink-light); font-style: italic; }
+.addedBy { font-size: 0.78rem; color: var(--ink-faint); }
+
+.movieActions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+.statusBtn {
+  border: var(--sketch-border);
+  border-radius: 3px 6px 3px 5px;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0 var(--ink-faint);
+}
+.want_to_watch { background: var(--paper-dark); color: var(--ink-light); }
+.watching { background: #e3f2fd; color: #1565c0; border-color: #1565c0; }
+.finished { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+
+.deleteBtn { background: none; border: none; color: var(--ink-faint); font-size: 1.2rem; cursor: pointer; padding: 0 4px; }
+.deleteBtn:hover { color: var(--accent); }
