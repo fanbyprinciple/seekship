@@ -8,6 +8,7 @@ import Message from './pages/Message'
 import Checklist from './pages/Checklist'
 import Calendar from './pages/Calendar'
 import Together from './pages/Together'
+import Settings from './pages/Settings'
 
 function AppRoutes() {
   const { user, loading: authLoading } = useAuth()
@@ -31,6 +32,7 @@ function AppRoutes() {
       <Route path="/checklist" element={<Checklist />} />
       <Route path="/calendar" element={<Calendar />} />
       <Route path="/together" element={<Together />} />
+      <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   )

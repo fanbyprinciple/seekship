@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import {
   collection, addDoc, serverTimestamp,
   doc, updateDoc,
@@ -76,6 +77,7 @@ export default function Home() {
         <span className={styles.logo}>Seekship ♥</span>
         <div className={styles.userInfo}>
           {user?.photoURL && <img src={user.photoURL} className={styles.avatar} alt="" />}
+          <Link to="/settings" className={styles.logoutBtn}>⚙</Link>
           <button className={styles.logoutBtn} onClick={() => void logout()}>Sign out</button>
         </div>
       </header>

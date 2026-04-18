@@ -5,6 +5,7 @@ import {
   setDoc,
   updateDoc,
   runTransaction,
+  deleteField,
   serverTimestamp,
   onSnapshot,
   type DocumentData,
@@ -82,5 +83,24 @@ export function usePartner(uid: string | undefined) {
     }
   }
 
-  return { userData, partnerData, loading, error, generateInviteCode, redeemCode }
+  const disconnectPartner = async () => {
+    if (!uid || !userData?.partnerId) return
+    const theirUid: string = userData.partnerId
+    await runTransaction(db, async (tx) => {
+      tx.update(doc(db, 'users', uid), { partnerId: deleteField(), inviteCode: deleteField() })
+      tx.update(doc(db, 'users', theirUid), { partnerId: deleteField() })
+    })
+  }
+
+  const regenerateCode = async () => {
+    if (!uid) return
+    const code = generateCode()
+    await setDoc(doc(db, 'inviteCodes', code), {
+      fromUid: uid, createdAt: serverTimestamp(), used: false,
+    })
+    await updateDoc(doc(db, 'users', uid), { inviteCode: code })
+    return code
+  }
+
+  return { userData, partnerData, loading, error, generateInviteCode, redeemCode, disconnectPartner, regenerateCode }
 }
