@@ -7,7 +7,10 @@ import Home from './pages/Home'
 import Message from './pages/Message'
 import Checklist from './pages/Checklist'
 import Calendar from './pages/Calendar'
-import Together from './pages/Together'
+import Meetup from './pages/Meetup'
+import Movies from './pages/Movies'
+import Goals from './pages/Goals'
+import Wishlist from './pages/Wishlist'
 import Settings from './pages/Settings'
 
 function AppRoutes() {
@@ -31,7 +34,10 @@ function AppRoutes() {
       <Route path="/message" element={<Message />} />
       <Route path="/checklist" element={<Checklist />} />
       <Route path="/calendar" element={<Calendar />} />
-      <Route path="/together" element={<Together />} />
+      <Route path="/meetup" element={<Meetup />} />
+      <Route path="/movies" element={<Movies />} />
+      <Route path="/goals" element={<Goals />} />
+      <Route path="/wishlist" element={<Wishlist />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>

@@ -1,0 +1,83 @@
+.page { min-height: 100vh; background: var(--paper); display: flex; flex-direction: column; }
+
+.container {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.illustration { opacity: 0.7; }
+
+.title { font-size: 1.8rem; font-weight: 700; color: var(--ink); margin: 0; }
+.sub { color: var(--ink-light); font-size: 1rem; margin: 0; }
+
+.countdownCard {
+  background: #fff;
+  border: var(--sketch-border);
+  border-radius: 4px 12px 4px 10px / 10px 4px 11px 4px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 24px 32px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.countNum { font-size: 4rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.countLabel { font-size: 1.1rem; color: var(--ink-light); }
+.today { font-size: 2.4rem; font-weight: 700; color: var(--accent); }
+.meetupNote { font-size: 1.05rem; color: var(--ink); margin: 4px 0 0; font-style: italic; }
+.meetupDate { font-size: 0.9rem; color: var(--ink-faint); margin: 0; }
+
+.form {
+  background: #fff;
+  border: var(--sketch-border);
+  border-radius: 3px 10px 3px 9px / 8px 3px 9px 3px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label { font-size: 0.85rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 1px; }
+
+.dateInput, .textInput {
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px;
+  padding: 10px 14px;
+  color: var(--ink);
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font);
+}
+.dateInput:focus, .textInput:focus { box-shadow: 0 0 0 3px var(--accent-light); }
+.textInput::placeholder { color: var(--ink-faint); }
+
+.saveBtn {
+  background: var(--ink);
+  color: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 8px 2px 7px / 6px 2px 7px 2px;
+  box-shadow: 3px 3px 0 var(--ink-light);
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: transform 0.1s, box-shadow 0.1s;
+  font-family: var(--font);
+}
+.saveBtn:hover:not(:disabled) { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink-light); }
+.saveBtn:disabled { opacity: 0.4; cursor: not-allowed; }

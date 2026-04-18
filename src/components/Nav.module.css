@@ -1,29 +1,28 @@
 .nav {
-  display: flex;
-  justify-content: stretch;
   border-bottom: 2px solid var(--ink);
   background: var(--paper-dark);
-  overflow-x: auto;
 }
 
+.scroll {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.scroll::-webkit-scrollbar { display: none; }
+
 .link, .active {
-  flex: 1;
+  flex-shrink: 0;
   color: var(--ink);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
-  padding: 10px 6px;
-  text-align: center;
+  padding: 10px 16px;
   border-right: 1px solid var(--ink-faint);
   white-space: nowrap;
   transition: background 0.1s;
+  font-family: var(--font);
 }
 
 .link:last-child, .active:last-child { border-right: none; }
-
 .link:hover { background: var(--paper); }
-
-.active {
-  background: var(--ink);
-  color: var(--paper);
-}
+.active { background: var(--ink); color: var(--paper); }

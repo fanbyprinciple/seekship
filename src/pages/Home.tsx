@@ -8,8 +8,12 @@ import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useMessages } from '../hooks/useMessages'
+import { usePanic, type PanicCause } from '../hooks/usePanic'
 import Nav from '../components/Nav'
+import PanicOverlay from '../components/PanicOverlay'
 import styles from './Home.module.css'
+
+function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
 
 function formatTime(seconds: number | undefined): string {
   if (!seconds) return ''
@@ -30,6 +34,15 @@ export default function Home() {
   const partnerId: string | undefined = userData?.partnerId
   const partnerName = partnerData?.displayName?.split(' ')[0] ?? 'your partner'
   const partnerTyping: boolean = partnerData?.isTyping ?? false
+  const pid = user?.uid && partnerId ? partnershipId(user.uid, partnerId) : null
+  const { panic, triggerPanic, dismissPanic } = usePanic(pid)
+  const [showPanicPicker, setShowPanicPicker] = useState(false)
+
+  const handlePanic = async (cause: PanicCause) => {
+    if (!user?.uid) return
+    await triggerPanic(cause, user.uid)
+    setShowPanicPicker(false)
+  }
 
   // Update typing indicator in Firestore
   const handleTextChange = async (val: string) => {
@@ -73,12 +86,33 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
+      <PanicOverlay
+        panic={panic}
+        isMe={panic.activatedBy === user?.uid}
+        partnerName={partnerName}
+        onDismiss={() => void dismissPanic()}
+      />
+
       <header className={styles.header}>
-        <span className={styles.logo}>Seekship ♥</span>
+        <span className={styles.logo}>Seekship</span>
         <div className={styles.userInfo}>
+          <div className={styles.panicWrapper}>
+            <button className={styles.panicBtn} onClick={() => setShowPanicPicker(p => !p)}>
+              Panic
+            </button>
+            {showPanicPicker && (
+              <div className={styles.panicPicker}>
+                {(['food', 'pain', 'boredom'] as PanicCause[]).map(c => (
+                  <button key={c} className={styles.panicChoice} onClick={() => void handlePanic(c)}>
+                    {c.charAt(0).toUpperCase() + c.slice(1)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           {user?.photoURL && <img src={user.photoURL} className={styles.avatar} alt="" />}
-          <Link to="/settings" className={styles.logoutBtn}>⚙</Link>
-          <button className={styles.logoutBtn} onClick={() => void logout()}>Sign out</button>
+          <Link to="/settings" className={styles.headerBtn}>Settings</Link>
+          <button className={styles.headerBtn} onClick={() => void logout()}>Sign out</button>
         </div>
       </header>
 

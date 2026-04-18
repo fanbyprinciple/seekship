@@ -27,12 +27,7 @@
   letter-spacing: 1px;
 }
 
-.heart {
-  display: block;
-  font-size: 1.8rem;
-  margin: 0 0 12px;
-  color: var(--accent);
-}
+.illustration { margin: 0 0 12px; opacity: 0.8; }
 
 .subtitle {
   color: var(--ink-light);
