@@ -1,0 +1,25 @@
+{
+  "name": "Seekship",
+  "short_name": "Seekship",
+  "description": "Long-distance relationship companion app.",
+  "start_url": "/seekship/",
+  "scope": "/seekship/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff0f5",
+  "theme_color": "#e91e8c",
+  "icons": [
+    {
+      "src": "/seekship/heart.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/seekship/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ]
+}
