@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useCalendar, EVENT_META, type EventType } from '../hooks/useCalendar'
+import { useImportantDates, daysUntil, type DateType } from '../hooks/useImportantDates'
 import Nav from '../components/Nav'
 import PageHeader from '../components/PageHeader'
 import styles from './Calendar.module.css'
@@ -17,6 +18,11 @@ export default function Calendar() {
   const { userData, partnerData } = usePartner(user?.uid)
   const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
   const { events, addEvent, deleteEvent } = useCalendar(pid)
+  const { dates, addDate, removeDate } = useImportantDates(pid)
+  const [showDateForm, setShowDateForm] = useState(false)
+  const [dateLabel, setDateLabel] = useState('')
+  const [dateMMDD, setDateMMDD] = useState('')
+  const [dateType, setDateType] = useState<DateType>('birthday')
 
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
@@ -54,6 +60,14 @@ export default function Calendar() {
     if (!selectedDate || !user?.uid) return
     await addEvent(addType, selectedDate, addNote, user.uid)
     setAddNote('')
+  }
+
+  const handleAddDate = async () => {
+    if (!dateLabel.trim() || !dateMMDD || !user?.uid) return
+    await addDate({ label: dateLabel.trim(), date: dateMMDD, type: dateType, createdBy: user.uid })
+    setDateLabel('')
+    setDateMMDD('')
+    setShowDateForm(false)
   }
 
   const monthName = new Date(year, month).toLocaleString('default', { month: 'long' })
@@ -168,6 +182,71 @@ export default function Calendar() {
             </div>
           </div>
         )}
+        {/* Important Dates */}
+        <div className={styles.importantSection}>
+          <div className={styles.importantHeader}>
+            <h3 className={styles.importantTitle}>Important Dates</h3>
+            <button className={styles.addDateBtn} onClick={() => setShowDateForm(f => !f)}>
+              {showDateForm ? 'Cancel' : '+ Add'}
+            </button>
+          </div>
+
+          {showDateForm && (
+            <div className={styles.dateForm}>
+              <input
+                className={styles.noteInput}
+                placeholder="Label (e.g. Mom's birthday)"
+                value={dateLabel}
+                onChange={e => setDateLabel(e.target.value)}
+                maxLength={50}
+              />
+              <div className={styles.typeRow}>
+                {(['anniversary', 'birthday', 'custom'] as DateType[]).map(t => (
+                  <button
+                    key={t}
+                    className={`${styles.typeBtn} ${dateType === t ? styles.typeBtnActive : ''}`}
+                    onClick={() => setDateType(t)}
+                  >
+                    {t === 'anniversary' ? 'Anniv.' : t === 'birthday' ? 'Birthday' : 'Custom'}
+                  </button>
+                ))}
+              </div>
+              <input
+                className={styles.noteInput}
+                type="text"
+                placeholder="MM-DD (e.g. 04-25)"
+                value={dateMMDD}
+                onChange={e => setDateMMDD(e.target.value)}
+                maxLength={5}
+                pattern="\d{2}-\d{2}"
+              />
+              <button className={styles.addBtn} onClick={() => void handleAddDate()}>Save Date</button>
+            </div>
+          )}
+
+          {dates.length === 0 && !showDateForm && (
+            <p className={styles.emptyDates}>No important dates yet.</p>
+          )}
+
+          <ul className={styles.dateList}>
+            {[...dates].sort((a, b) => daysUntil(a.date) - daysUntil(b.date)).map(d => {
+              const n = daysUntil(d.date)
+              return (
+                <li key={d.id} className={styles.dateItem}>
+                  <div className={styles.dateInfo}>
+                    <span className={styles.dateName}>{d.label}</span>
+                    <span className={styles.dateMMDD}>{d.date}</span>
+                  </div>
+                  <span className={`${styles.daysLeft} ${n <= 1 ? styles.soon : ''}`}>
+                    {n === 0 ? 'Today!' : n === 1 ? 'Tomorrow!' : `${n}d`}
+                  </span>
+                  <button className={styles.deleteBtn} onClick={() => void removeDate(d.id)}>×</button>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+
       </div>
     </div>
   )

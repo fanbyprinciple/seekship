@@ -9,11 +9,31 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useMessages } from '../hooks/useMessages'
 import { usePanic, type PanicCause } from '../hooks/usePanic'
+import { useMood, type Mood } from '../hooks/useMood'
+import { useImportantDates, daysUntil } from '../hooks/useImportantDates'
 import Nav from '../components/Nav'
 import Logo from '../components/Logo'
 import ThemePicker from '../components/ThemePicker'
 import PanicOverlay from '../components/PanicOverlay'
 import styles from './Home.module.css'
+
+const MOOD_OPTIONS: { mood: Mood; label: string; symbol: string }[] = [
+  { mood: 'happy',   label: 'Happy',    symbol: '◡' },
+  { mood: 'loved',   label: 'Loved',    symbol: '♡' },
+  { mood: 'okay',    label: 'Okay',     symbol: '◌' },
+  { mood: 'sad',     label: 'Sad',      symbol: '◠' },
+  { mood: 'stressed',label: 'Stressed', symbol: '⌁' },
+]
+
+function moodTint(my: Mood | null, partner: Mood | null): string {
+  const moods = [my, partner].filter(Boolean)
+  if (moods.includes('happy') && !moods.includes('sad') && !moods.includes('stressed'))
+    return 'rgba(255,236,153,0.25)'
+  if (moods.includes('loved')) return 'rgba(233,30,140,0.08)'
+  if (moods.includes('sad'))   return 'rgba(100,149,237,0.12)'
+  if (moods.includes('stressed')) return 'rgba(255,140,0,0.1)'
+  return 'transparent'
+}
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
 
@@ -51,7 +71,17 @@ export default function Home() {
   const partnerTyping: boolean = partnerData?.isTyping ?? false
   const pid = user?.uid && partnerId ? partnershipId(user.uid, partnerId) : null
   const { panic, triggerPanic, dismissPanic } = usePanic(pid)
+  const { myMood, partnerMood, logMood } = useMood(pid, user?.uid, partnerId)
+  const { upcoming } = useImportantDates(pid)
   const [showPanicPicker, setShowPanicPicker] = useState(false)
+  const [dateBannerDismissed, setDateBannerDismissed] = useState(
+    () => sessionStorage.getItem('seekship-date-banner') === 'dismissed'
+  )
+
+  const dismissDateBanner = () => {
+    sessionStorage.setItem('seekship-date-banner', 'dismissed')
+    setDateBannerDismissed(true)
+  }
 
   const handlePanic = async (cause: PanicCause) => {
     if (!user?.uid) return
@@ -131,12 +161,47 @@ export default function Home() {
       <Nav />
 
       <main className={styles.main}>
+        {/* Date notifications */}
+        {!dateBannerDismissed && upcoming.length > 0 && (
+          <div className={styles.dateBanner}>
+            <span>
+              {upcoming.map(d => {
+                const n = daysUntil(d.date)
+                return `${n === 0 ? 'Today' : 'Tomorrow'}: ${d.label}`
+              }).join('  ·  ')}
+            </span>
+            <button className={styles.bannerClose} onClick={dismissDateBanner}>×</button>
+          </div>
+        )}
+
+        {/* Mood bar */}
+        <div className={styles.moodBar}>
+          <span className={styles.moodLabel}>You</span>
+          <div className={styles.moodBtns}>
+            {MOOD_OPTIONS.map(({ mood, label, symbol }) => (
+              <button
+                key={mood}
+                className={`${styles.moodBtn} ${myMood === mood ? styles.moodActive : ''}`}
+                onClick={() => void logMood(mood)}
+                title={label}
+              >
+                {symbol}
+              </button>
+            ))}
+          </div>
+          {partnerMood && (
+            <span className={styles.partnerMood} title={`${nickname}'s mood`}>
+              {MOOD_OPTIONS.find(m => m.mood === partnerMood)?.symbol ?? ''}
+            </span>
+          )}
+        </div>
+
         {partnerTyping && (
           <div className={styles.typingBanner}>{nickname} is writing something...</div>
         )}
 
         {/* Postcard compose */}
-        <div className={styles.postcard}>
+        <div className={styles.postcard} style={{ background: moodTint(myMood, partnerMood) === 'transparent' ? undefined : `linear-gradient(${moodTint(myMood, partnerMood)}, ${moodTint(myMood, partnerMood)}), #fffef8` }}>
           <div className={styles.postcardHeader}>
             <span className={styles.postcardTo}>To: {nickname}</span>
             <div className={styles.stamp}>

@@ -180,3 +180,91 @@
   transition: transform 0.1s, box-shadow 0.1s;
 }
 .addBtn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink-light); }
+
+/* ── Important Dates ────────────────────────────────────────── */
+.importantSection {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.importantHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.importantTitle {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+.addDateBtn {
+  background: none;
+  border: var(--sketch-border);
+  border-radius: 2px 6px 2px 5px / 4px 2px 5px 2px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.addDateBtn:hover { transform: translate(-1px,-1px); }
+
+.dateForm {
+  background: var(--paper-dark);
+  border: 1px dashed var(--ink-faint);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.emptyDates {
+  color: var(--ink-faint);
+  font-size: 0.9rem;
+  margin: 0;
+}
+.dateList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dateItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--paper);
+  border: 1px solid var(--ink-faint);
+  border-radius: 3px 8px 3px 7px / 5px 3px 6px 3px;
+}
+.dateInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.dateName {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.dateMMDD {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+.daysLeft {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-light);
+  white-space: nowrap;
+}
+.soon { color: var(--accent); }

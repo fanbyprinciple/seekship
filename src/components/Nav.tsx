@@ -2,13 +2,15 @@ import { NavLink } from 'react-router-dom'
 import styles from './Nav.module.css'
 
 const links = [
-  { to: '/home',      label: 'Note' },
-  { to: '/checklist', label: 'List' },
-  { to: '/calendar',  label: 'Calendar' },
-  { to: '/meetup',    label: 'Meetup' },
-  { to: '/movies',    label: 'Movies' },
-  { to: '/goals',     label: 'Goals' },
-  { to: '/wishlist',  label: 'Wishlist' },
+  { to: '/home',        label: 'Note' },
+  { to: '/checklist',   label: 'List' },
+  { to: '/calendar',    label: 'Calendar' },
+  { to: '/meetup',      label: 'Meetup' },
+  { to: '/movies',      label: 'Movies' },
+  { to: '/goals',       label: 'Goals' },
+  { to: '/wishlist',    label: 'Wishlist' },
+  { to: '/stats',       label: 'Stats' },
+  { to: '/councillor',  label: 'Councillor' },
 ]
 
 export default function Nav() {

@@ -118,6 +118,96 @@
 }
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 
+/* ── Date Banner ────────────────────────────────────────────── */
+.dateBanner {
+  width: 100%;
+  background: var(--accent-light);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+.bannerClose {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font-size: 1.1rem;
+  padding: 0 4px;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.bannerClose:hover { color: var(--accent); }
+
+/* ── Mood Bar ───────────────────────────────────────────────── */
+.moodBar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  background: var(--paper-dark);
+  border: 1px solid var(--ink-faint);
+  border-radius: 3px 8px 3px 7px / 6px 3px 7px 3px;
+}
+.moodLabel {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.moodBtns {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.moodBtn {
+  background: none;
+  border: 1px solid var(--ink-faint);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.moodBtn:hover { border-color: var(--ink); color: var(--ink); transform: scale(1.15); }
+.moodActive {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  transform: scale(1.1);
+}
+.partnerMood {
+  font-size: 1.1rem;
+  color: var(--accent);
+  border: 1px dashed var(--accent);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 /* ── Postcard ───────────────────────────────────────────────── */
 .postcard {
   width: 100%;

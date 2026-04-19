@@ -1,0 +1,201 @@
+.page { min-height: 100vh; background: var(--paper); display: flex; flex-direction: column; }
+
+/* ── Setup screen ───────────────────────────────────────────── */
+.setupContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.setupCard {
+  background: var(--paper-dark);
+  border: var(--sketch-border);
+  border-radius: 4px 14px 4px 12px / 12px 4px 12px 4px;
+  box-shadow: 5px 5px 0 var(--ink);
+  padding: 28px 24px;
+  max-width: 460px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.setupTitle {
+  font-family: var(--font-ui);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+.setupText {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  margin: 0;
+  line-height: 1.5;
+}
+.setupLink {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+.keyRow {
+  display: flex;
+  gap: 8px;
+}
+.keyInput {
+  flex: 1;
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 6px 2px 5px / 5px 2px 6px 2px;
+  padding: 9px 12px;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  outline: none;
+}
+.keyInput::placeholder { color: var(--ink-faint); }
+.saveKeyBtn {
+  background: var(--ink);
+  color: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 7px 2px 6px / 5px 2px 6px 2px;
+  box-shadow: 3px 3px 0 var(--ink-light);
+  padding: 9px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.saveKeyBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.setupNote {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  margin: 0;
+}
+
+/* ── Chat screen ────────────────────────────────────────────── */
+.chatContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px 16px;
+  min-height: 0;
+}
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 10px;
+  border-bottom: 1px dashed var(--ink-faint);
+  margin-bottom: 12px;
+}
+.chatTitle {
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.resetKey {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  text-decoration: underline;
+}
+.resetKey:hover { color: var(--accent); }
+
+.emptyChat {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+.emptyChat p {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  line-height: 1.6;
+  max-width: 340px;
+}
+
+.messageList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 12px;
+}
+
+.bubble {
+  padding: 10px 14px;
+  border-radius: 3px 10px 10px 3px;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  max-width: 85%;
+  white-space: pre-wrap;
+}
+.userBubble {
+  background: var(--ink);
+  color: var(--paper);
+  align-self: flex-end;
+  border-radius: 10px 3px 3px 10px;
+}
+.modelBubble {
+  background: var(--paper-dark);
+  color: var(--ink);
+  border: 1px solid var(--ink-faint);
+  align-self: flex-start;
+}
+.typing {
+  opacity: 0.5;
+  animation: blink 1s ease-in-out infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 0.3 } 50% { opacity: 0.8 } }
+
+.inputRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding-top: 10px;
+  border-top: 1px dashed var(--ink-faint);
+}
+.chatInput {
+  flex: 1;
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 3px 8px 3px 7px / 6px 3px 7px 3px;
+  padding: 10px 12px;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  resize: none;
+  outline: none;
+  line-height: 1.4;
+}
+.chatInput::placeholder { color: var(--ink-faint); font-family: var(--font-ui); }
+.chatInput:focus { box-shadow: 0 0 0 2px var(--accent-light); }
+.sendBtn {
+  background: var(--ink);
+  color: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 8px 2px 7px / 6px 2px 7px 2px;
+  box-shadow: 3px 3px 0 var(--ink-light);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  align-self: flex-end;
+}
+.sendBtn:disabled { opacity: 0.4; cursor: not-allowed; }

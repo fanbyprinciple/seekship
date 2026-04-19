@@ -13,6 +13,8 @@ import Movies from './pages/Movies'
 import Goals from './pages/Goals'
 import Wishlist from './pages/Wishlist'
 import Settings from './pages/Settings'
+import Stats from './pages/Stats'
+import Councillor from './pages/Councillor'
 
 function AppRoutes() {
   const { user, loading: authLoading } = useAuth()
@@ -40,6 +42,8 @@ function AppRoutes() {
       <Route path="/movies" element={<Movies />} />
       <Route path="/goals" element={<Goals />} />
       <Route path="/wishlist" element={<Wishlist />} />
+      <Route path="/stats" element={<Stats />} />
+      <Route path="/councillor" element={<Councillor />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
@@ -51,7 +55,7 @@ function LoadingScreen() {
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'var(--paper)', color: 'var(--ink-light)',
-      fontSize: '1.3rem', fontFamily: 'var(--font)',
+      fontSize: '1.3rem', fontFamily: 'var(--font-ui)',
     }}>
       Loading...
     </div>
