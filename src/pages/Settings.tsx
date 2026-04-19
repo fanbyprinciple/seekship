@@ -140,9 +140,13 @@ export default function Settings() {
         <div className={styles.card}>
           <h3 className={styles.cardTitle}>Notifications</h3>
           <p className={styles.hint}>
-            Panic alerts ring on both phones. Messages ping the recipient.
+            Panic alerts ring on both phones; messages ping the recipient.
+            Notifications fire while the app is open or the installed PWA
+            is running in the background — no server push on the free plan,
+            so if both phones have the app fully closed, the alert waits
+            until one of you reopens it.
             {isIOS && !isStandalone && (
-              <> On iPhone, tap <strong>Share → Add to Home Screen</strong> first — push only works from the installed app.</>
+              <> On iPhone, tap <strong>Share → Add to Home Screen</strong> first so Safari keeps the service worker alive.</>
             )}
           </p>
           {permission === 'granted' && (
@@ -165,8 +169,8 @@ export default function Settings() {
           )}
           {permission === 'unsupported' && (
             <p className={styles.hint}>
-              This browser can't receive push. Try Chrome on Android or Safari
-              on iOS 16.4+ (installed to home screen).
+              This browser can't show notifications. Try Chrome on Android or
+              Safari on iOS 16.4+ (installed to home screen).
             </p>
           )}
         </div>

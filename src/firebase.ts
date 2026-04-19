@@ -6,7 +6,6 @@ import {
   persistentMultipleTabManager,
   CACHE_SIZE_UNLIMITED,
 } from 'firebase/firestore'
-import { getMessaging, isSupported } from 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -32,9 +31,3 @@ export const db = initializeFirestore(app, {
 })
 
 export const googleProvider = new GoogleAuthProvider()
-
-export const getMessagingInstance = async () => {
-  const supported = await isSupported()
-  if (!supported) return null
-  return getMessaging(app)
-}

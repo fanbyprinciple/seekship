@@ -18,7 +18,6 @@ export default defineConfig({
         manualChunks: {
           'firebase-core': ['firebase/app', 'firebase/auth'],
           'firebase-data': ['firebase/firestore'],
-          'firebase-push': ['firebase/messaging'],
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
         },
       },

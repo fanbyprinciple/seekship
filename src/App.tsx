@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { usePartner } from './hooks/usePartner'
 import { useNotifications } from './hooks/useNotifications'
+import { useLocalAlerts } from './hooks/useLocalAlerts'
+import { maybePartnershipId } from './utils/partnership'
 import ErrorBoundary from './components/ErrorBoundary'
 
 // Login + Invite are in the critical auth path; ship them eagerly.
@@ -28,6 +30,8 @@ function AppRoutes() {
   const { user, loading: authLoading } = useAuth()
   const { userData, loading: partnerLoading } = usePartner(user?.uid)
   useNotifications(user?.uid)
+  const partnerId = userData?.partnerId as string | undefined
+  useLocalAlerts(user?.uid, partnerId, maybePartnershipId(user?.uid, partnerId))
 
   if (authLoading || (user && partnerLoading)) return <LoadingScreen />
 
