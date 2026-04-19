@@ -12,6 +12,38 @@
 
 .loading { color: var(--ink-faint); font-size: 1rem; margin: 0; font-family: var(--font-ui); }
 
+.sharedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+.sharedTile {
+  background: var(--paper-dark);
+  border: var(--sketch-border);
+  border-radius: 3px 9px 3px 8px / 8px 3px 8px 3px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+.sharedNum {
+  font-family: var(--font-ui);
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1;
+}
+.sharedLabel {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--ink-light);
+}
+
 /* Hero */
 .heroCard {
   background: var(--ink);

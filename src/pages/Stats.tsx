@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  collection, query, where, getDocs,
-  doc, getDoc,
+  collection, query, where, getDocs, getCountFromServer, limit,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth'
@@ -14,19 +13,31 @@ import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 interface PlayerStats {
   messagesSent: number
-  goalsTotal: number
+  messagesRecv: number
+  goalsCreated: number
   goalsDone: number
-  checklistTotal: number
-  checklistDone: number
-  panics: number
-  moviesWatched: number
-  wishlistItems: number
+  tasksCreated: number
+  tasksDone: number
+  moviesAdded: number
+  moviesFinished: number
+  wishlistAdded: number
 }
 
 interface CompareResult {
   mine: PlayerStats
   theirs: PlayerStats
-  daysTogther: number | null
+  sharedMovies: number
+  sharedTasks: number
+  totalMessages: number
+  daysTogether: number | null
+}
+
+const EMPTY_STATS: PlayerStats = {
+  messagesSent: 0, messagesRecv: 0,
+  goalsCreated: 0, goalsDone: 0,
+  tasksCreated: 0, tasksDone: 0,
+  moviesAdded: 0, moviesFinished: 0,
+  wishlistAdded: 0,
 }
 
 function winner(a: number, b: number): 'me' | 'them' | 'tie' {
@@ -43,78 +54,86 @@ export default function Stats() {
   const myName = user?.displayName?.split(' ')[0] ?? 'You'
   const { dates } = useImportantDates(pid)
   const [result, setResult] = useState<CompareResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user?.uid || !userData?.partnerId || !pid) return
+    const myUid = user.uid
     const partnerId = userData.partnerId as string
 
     const load = async () => {
-      const [
-        mySentSnap, theirSentSnap,
-        goalsSnap, checkSnap,
-        panicSnap,
-        moviesSnap,
-        wishSnap,
-      ] = await Promise.all([
-        getDocs(query(collection(db, 'messages'), where('fromUid', '==', user.uid))),
-        getDocs(query(collection(db, 'messages'), where('fromUid', '==', partnerId))),
-        getDocs(collection(db, 'partnerships', pid, 'goals')),
-        getDocs(collection(db, 'checklists', pid, 'items')),
-        getDoc(doc(db, 'panics', pid)),
-        getDocs(collection(db, 'partnerships', pid, 'movies')),
-        getDocs(collection(db, 'wishlists', pid, 'items')),
-      ])
+      setLoading(true)
+      setError(null)
+      try {
+        const [
+          mySentCount, theirSentCount,
+          goalsSnap, checkSnap, moviesSnap, wishSnap,
+        ] = await Promise.all([
+          getCountFromServer(query(
+            collection(db, 'messages'),
+            where('fromUid', '==', myUid),
+            where('toUid', '==', partnerId),
+          )),
+          getCountFromServer(query(
+            collection(db, 'messages'),
+            where('fromUid', '==', partnerId),
+            where('toUid', '==', myUid),
+          )),
+          getDocs(query(collection(db, 'partnerships', pid, 'goals'), limit(500))),
+          getDocs(query(collection(db, 'checklists', pid, 'items'), limit(500))),
+          getDocs(query(collection(db, 'partnerships', pid, 'movies'), limit(500))),
+          getDocs(query(collection(db, 'partnerships', pid, 'wishlist'), limit(500))),
+        ])
 
-      const goalDocs = goalsSnap.docs.map(d => d.data())
-      const checkDocs = checkSnap.docs.map(d => d.data())
-      const panicData = panicSnap.exists() ? panicSnap.data() : null
+        const goals = goalsSnap.docs.map(d => d.data())
+        const tasks = checkSnap.docs.map(d => d.data())
+        const movies = moviesSnap.docs.map(d => d.data())
+        const wishes = wishSnap.docs.map(d => d.data())
 
-      const anniversary = dates.find(d => d.type === 'anniversary')
-      let daysTogther: number | null = null
-      if (anniversary?.year) {
-        const [mm, dd] = anniversary.date.split('-').map(Number)
-        const start = new Date(anniversary.year, mm - 1, dd)
-        daysTogther = Math.floor((Date.now() - start.getTime()) / 86400000)
+        const mine: PlayerStats = {
+          messagesSent: mySentCount.data().count,
+          messagesRecv: theirSentCount.data().count,
+          goalsCreated: goals.filter(g => g.addedBy === myUid).length,
+          goalsDone: goals.filter(g => g.addedBy === myUid && g.status === 'done').length,
+          tasksCreated: tasks.filter(t => t.addedBy === myUid).length,
+          tasksDone: tasks.filter(t => t.addedBy === myUid && t.checked).length,
+          moviesAdded: movies.filter(m => m.addedBy === myUid).length,
+          moviesFinished: movies.filter(m => m.addedBy === myUid && m.status === 'finished').length,
+          wishlistAdded: wishes.filter(w => w.addedBy === myUid).length,
+        }
+        const theirs: PlayerStats = {
+          messagesSent: theirSentCount.data().count,
+          messagesRecv: mySentCount.data().count,
+          goalsCreated: goals.filter(g => g.addedBy === partnerId).length,
+          goalsDone: goals.filter(g => g.addedBy === partnerId && g.status === 'done').length,
+          tasksCreated: tasks.filter(t => t.addedBy === partnerId).length,
+          tasksDone: tasks.filter(t => t.addedBy === partnerId && t.checked).length,
+          moviesAdded: movies.filter(m => m.addedBy === partnerId).length,
+          moviesFinished: movies.filter(m => m.addedBy === partnerId && m.status === 'finished').length,
+          wishlistAdded: wishes.filter(w => w.addedBy === partnerId).length,
+        }
+
+        const anniversary = dates.find(d => d.type === 'anniversary')
+        let daysTogether: number | null = null
+        if (anniversary?.year) {
+          const [mm, dd] = anniversary.date.split('-').map(Number)
+          const start = new Date(anniversary.year, mm - 1, dd)
+          daysTogether = Math.floor((Date.now() - start.getTime()) / 86400000)
+        }
+
+        setResult({
+          mine, theirs,
+          sharedMovies: movies.filter(m => m.status === 'finished').length,
+          sharedTasks: tasks.filter(t => t.checked).length,
+          totalMessages: mine.messagesSent + theirs.messagesSent,
+          daysTogether,
+        })
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to load stats.')
+      } finally {
+        setLoading(false)
       }
-
-      const myGoalsDone = goalDocs.filter(g => g.createdBy === user.uid && g.status === 'done').length
-      const theirGoalsDone = goalDocs.filter(g => g.createdBy === partnerId && g.status === 'done').length
-      const myGoalsTotal = goalDocs.filter(g => g.createdBy === user.uid).length
-      const theirGoalsTotal = goalDocs.filter(g => g.createdBy === partnerId).length
-
-      const myCheckDone = checkDocs.filter(c => c.createdBy === user.uid && c.checked).length
-      const theirCheckDone = checkDocs.filter(c => c.createdBy === partnerId && c.checked).length
-      const myCheckTotal = checkDocs.filter(c => c.createdBy === user.uid).length
-      const theirCheckTotal = checkDocs.filter(c => c.createdBy === partnerId).length
-
-      const moviesWatched = moviesSnap.docs.filter(d => d.data().watched).length
-      const wishlistCount = wishSnap.size
-
-      setResult({
-        daysTogther,
-        mine: {
-          messagesSent: mySentSnap.size,
-          goalsTotal: myGoalsTotal,
-          goalsDone: myGoalsDone,
-          checklistTotal: myCheckTotal,
-          checklistDone: myCheckDone,
-          panics: panicData?.triggeredBy === user.uid ? (panicData?.triggerCount ?? 0) : 0,
-          moviesWatched,
-          wishlistItems: wishlistCount,
-        },
-        theirs: {
-          messagesSent: theirSentSnap.size,
-          goalsTotal: theirGoalsTotal,
-          goalsDone: theirGoalsDone,
-          checklistTotal: theirCheckTotal,
-          checklistDone: theirCheckDone,
-          panics: panicData?.triggeredBy === partnerId ? (panicData?.triggerCount ?? 0) : 0,
-          moviesWatched,
-          wishlistItems: wishlistCount,
-        },
-      })
-      setLoading(false)
     }
 
     void load()
@@ -123,15 +142,26 @@ export default function Stats() {
   const anniversary = dates.find(d => d.type === 'anniversary')
   const nextAnniv = anniversary ? daysUntil(anniversary.date) : null
 
-  const categories: { label: string; myVal: number; theirVal: number; emoji: string }[] = result ? [
-    { label: 'Notes sent', myVal: result.mine.messagesSent, theirVal: result.theirs.messagesSent, emoji: '💌' },
-    { label: 'Goals done', myVal: result.mine.goalsDone, theirVal: result.theirs.goalsDone, emoji: '🎯' },
-    { label: 'Tasks checked', myVal: result.mine.checklistDone, theirVal: result.theirs.checklistDone, emoji: '✅' },
-  ] : []
+  const mine = result?.mine ?? EMPTY_STATS
+  const theirs = result?.theirs ?? EMPTY_STATS
+
+  const categories: { label: string; myVal: number; theirVal: number; emoji: string }[] = [
+    { label: 'Notes sent',       myVal: mine.messagesSent,   theirVal: theirs.messagesSent,   emoji: '💌' },
+    { label: 'Goals done',       myVal: mine.goalsDone,      theirVal: theirs.goalsDone,      emoji: '🎯' },
+    { label: 'Tasks checked',    myVal: mine.tasksDone,      theirVal: theirs.tasksDone,      emoji: '✅' },
+    { label: 'Movies finished',  myVal: mine.moviesFinished, theirVal: theirs.moviesFinished, emoji: '🎬' },
+    { label: 'Wishes added',     myVal: mine.wishlistAdded,  theirVal: theirs.wishlistAdded,  emoji: '🎁' },
+    { label: 'Tasks created',    myVal: mine.tasksCreated,   theirVal: theirs.tasksCreated,   emoji: '📝' },
+    { label: 'Goals set',        myVal: mine.goalsCreated,   theirVal: theirs.goalsCreated,   emoji: '⭐' },
+  ]
 
   const myWins = categories.filter(c => winner(c.myVal, c.theirVal) === 'me').length
   const theirWins = categories.filter(c => winner(c.myVal, c.theirVal) === 'them').length
   const champion = myWins > theirWins ? myName : theirWins > myWins ? nickname : null
+
+  const avgPerDay = result?.daysTogether && result.daysTogether > 0
+    ? (result.totalMessages / result.daysTogether).toFixed(1)
+    : null
 
   return (
     <div className={styles.page}>
@@ -140,9 +170,9 @@ export default function Stats() {
       <div className={styles.container}>
 
         {/* Hero: days together */}
-        {result?.daysTogther !== null && result?.daysTogther !== undefined ? (
+        {result?.daysTogether !== null && result?.daysTogether !== undefined ? (
           <div className={styles.heroCard}>
-            <span className={styles.heroNum}>{result.daysTogther}</span>
+            <span className={styles.heroNum}>{result.daysTogether}</span>
             <span className={styles.heroLabel}>days together</span>
             {nextAnniv !== null && nextAnniv <= 30 && (
               <span className={styles.heroSub}>
@@ -157,9 +187,32 @@ export default function Stats() {
         )}
 
         {loading && <p className={styles.loading}>Loading stats...</p>}
+        {error && <p className={styles.loading}>Stats error: {error}</p>}
 
-        {!loading && result && (
+        {!loading && !error && result && (
           <>
+            {/* Shared totals */}
+            <div className={styles.sharedGrid}>
+              <div className={styles.sharedTile}>
+                <span className={styles.sharedNum}>{result.totalMessages}</span>
+                <span className={styles.sharedLabel}>Total notes exchanged</span>
+              </div>
+              <div className={styles.sharedTile}>
+                <span className={styles.sharedNum}>{result.sharedTasks}</span>
+                <span className={styles.sharedLabel}>Shared tasks done</span>
+              </div>
+              <div className={styles.sharedTile}>
+                <span className={styles.sharedNum}>{result.sharedMovies}</span>
+                <span className={styles.sharedLabel}>Movies watched together</span>
+              </div>
+              {avgPerDay !== null && (
+                <div className={styles.sharedTile}>
+                  <span className={styles.sharedNum}>{avgPerDay}</span>
+                  <span className={styles.sharedLabel}>Notes / day avg</span>
+                </div>
+              )}
+            </div>
+
             {/* Championship banner */}
             <div className={styles.champ}>
               <span className={styles.champCrown}>🏆</span>

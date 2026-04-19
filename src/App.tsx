@@ -22,6 +22,7 @@ const Wishlist = lazy(() => import('./pages/Wishlist'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Stats = lazy(() => import('./pages/Stats'))
 const Councillor = lazy(() => import('./pages/Councillor'))
+const Growth = lazy(() => import('./pages/Growth'))
 
 function AppRoutes() {
   const { user, loading: authLoading } = useAuth()
@@ -53,6 +54,7 @@ function AppRoutes() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/stats" element={<Stats />} />
         <Route path="/councillor" element={<Councillor />} />
+        <Route path="/growth" element={<Growth />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>

@@ -1,34 +1,41 @@
 .picker {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 }
 
 .dot {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px 7px 3px 6px / 6px 3px 7px 4px;
   border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
   padding: 0;
   cursor: pointer;
   transition: transform 0.12s, box-shadow 0.12s;
   flex-shrink: 0;
-  position: relative;
 }
 
-/* Invisible 44px hit area keeps visual dot small but tap target accessible. */
+/* Invisible 44px hit area keeps visual tile small but tap target accessible. */
 .dot::before {
   content: '';
   position: absolute;
-  inset: -11px;
-  border-radius: 50%;
+  inset: -9px;
+  border-radius: 6px;
 }
 
 .dot:hover {
-  transform: scale(1.2);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--ink);
 }
 
 .active {
+  transform: translate(1px, 1px);
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
-  transform: scale(1.15);
+}
+
+@media (max-width: 480px) {
+  .picker { gap: 5px; }
+  .dot { width: 22px; height: 22px; }
 }
