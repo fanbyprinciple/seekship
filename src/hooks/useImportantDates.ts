@@ -5,7 +5,7 @@ import {
 } from 'firebase/firestore'
 import { db } from '../firebase'
 
-export type DateType = 'anniversary' | 'birthday' | 'custom'
+export type DateType = 'anniversary' | 'birthday' | 'friend_birthday' | 'custom'
 
 export interface ImportantDate {
   id: string
@@ -58,10 +58,10 @@ export function useImportantDates(partnershipId: string | null) {
     await deleteDoc(doc(db, 'partnerships', partnershipId, 'dates', id))
   }
 
-  // dates that are today or tomorrow
+  // dates within next 7 days
   const upcoming = dates.filter(d => {
     const n = daysUntil(d.date)
-    return n === 0 || n === 1
+    return n >= 0 && n <= 7
   })
 
   return { dates, addDate, removeDate, upcoming }

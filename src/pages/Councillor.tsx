@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import {
-  collection, getDocs, query, orderBy, limit,
+  collection, getDocs, query, where, orderBy, limit,
   doc, updateDoc, getDoc,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import styles from './Councillor.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -20,15 +20,17 @@ interface ChatMsg {
 async function buildContext(pid: string, uid: string): Promise<string> {
   const parts: string[] = []
 
-  // Last 20 messages
-  const msgsSnap = await getDocs(
-    query(collection(db, 'messages'), orderBy('sentAt', 'desc'), limit(20))
-  )
-  const msgs = msgsSnap.docs
+  // Last 20 messages (must query sent + received separately — Firestore OR not allowed on different fields)
+  const [sentSnap, recvSnap] = await Promise.all([
+    getDocs(query(collection(db, 'messages'), where('fromUid', '==', uid), orderBy('sentAt', 'desc'), limit(10))),
+    getDocs(query(collection(db, 'messages'), where('toUid', '==', uid), orderBy('sentAt', 'desc'), limit(10))),
+  ])
+  const allMsgs = [...sentSnap.docs, ...recvSnap.docs]
     .map(d => d.data())
-    .filter(m => m.fromUid === uid || m.toUid === uid)
-    .map(m => `[${m.fromUid === uid ? 'Me' : 'Partner'}]: ${m.text as string}`)
-  if (msgs.length) parts.push(`Recent messages:\n${msgs.reverse().join('\n')}`)
+    .sort((a, b) => ((a.sentAt?.seconds ?? 0) as number) - ((b.sentAt?.seconds ?? 0) as number))
+    .slice(-20)
+  const msgs = allMsgs.map(m => `[${(m.fromUid as string) === uid ? 'Me' : 'Partner'}]: ${m.text as string}`)
+  if (msgs.length) parts.push(`Recent messages:\n${msgs.join('\n')}`)
 
   // Goals
   const goalsSnap = await getDocs(collection(db, 'partnerships', pid, 'goals'))
@@ -39,7 +41,7 @@ async function buildContext(pid: string, uid: string): Promise<string> {
   if (goals.length) parts.push(`Goals: ${goals.join(', ')}`)
 
   // Checklist
-  const checkSnap = await getDocs(collection(db, 'partnerships', pid, 'items'))
+  const checkSnap = await getDocs(collection(db, 'checklists', pid, 'items'))
   const checks = checkSnap.docs.map(d => {
     const c = d.data()
     return `${c.text as string} [${c.checked ? 'done' : 'pending'}]`
@@ -167,7 +169,7 @@ export default function Councillor() {
   if (!apiKey) {
     return (
       <div className={styles.page}>
-        <PageHeader />
+        <TopBar />
         <Nav />
         <div className={styles.setupContainer}>
           <div className={styles.setupCard}>
@@ -210,7 +212,7 @@ export default function Councillor() {
 
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.chatContainer}>
         <div className={styles.chatHeader}>

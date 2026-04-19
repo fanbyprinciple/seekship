@@ -1,0 +1,188 @@
+.page { min-height: 100vh; background: var(--paper); display: flex; flex-direction: column; }
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 48px;
+  max-width: 580px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.typingBanner {
+  width: 100%;
+  background: var(--accent-light);
+  border: 1px dashed var(--accent);
+  border-radius: 4px;
+  padding: 7px 14px;
+  color: var(--accent);
+  font-size: 0.88rem;
+  margin-bottom: 14px;
+  font-family: var(--font-ui);
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+/* ── Postcard ───────────────────────────────────────────────── */
+.postcard {
+  width: 100%;
+  background: #fffef8;
+  border: 2px solid var(--ink);
+  border-radius: 3px 12px 4px 11px / 10px 3px 11px 4px;
+  box-shadow: 5px 5px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+[data-theme="dark"] .postcard { background: var(--paper-dark); }
+
+.postcardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 14px 8px;
+  border-bottom: 1px dashed var(--ink-faint);
+}
+
+.postcardTo {
+  font-family: var(--font-content);
+  font-size: 1rem;
+  color: var(--ink-light);
+}
+
+.postcardLines {
+  padding: 12px 14px 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 31px,
+    var(--ink-faint) 31px,
+    var(--ink-faint) 32px
+  );
+  background-size: 100% 32px;
+  background-position: 0 16px;
+}
+
+.textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ink);
+  font-family: var(--font-content);
+  font-size: 1.1rem;
+  line-height: 2rem;
+  resize: none;
+  padding: 0;
+  display: block;
+}
+.textarea::placeholder { color: var(--ink-faint); font-family: var(--font-content); }
+
+.postcardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 14px;
+  border-top: 1px dashed var(--ink-faint);
+  margin-top: 10px;
+}
+
+.charCount {
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+  font-family: var(--font-ui);
+}
+
+.sendBtn {
+  background: var(--ink);
+  color: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 2px 8px 2px 7px / 6px 2px 7px 2px;
+  box-shadow: 3px 3px 0 var(--ink-light);
+  padding: 8px 28px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.sendBtn:hover:not(:disabled) { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink-light); }
+.sendBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Letters ────────────────────────────────────────────────── */
+.inboxSection { width: 100%; }
+
+.inboxLabel {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--ink-faint);
+  margin: 0 0 10px;
+}
+
+.letterList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.letter {
+  background: var(--paper);
+  border: 1px solid var(--ink-faint);
+  border-radius: 3px 8px 3px 7px / 6px 3px 7px 3px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mine { border-left: 3px solid var(--ink); }
+.theirs { border-left: 3px solid var(--accent); }
+
+.letterBody { display: flex; flex-direction: column; gap: 2px; }
+
+.letterFrom {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.letterText {
+  font-family: var(--font-content);
+  font-size: 1rem;
+  color: var(--ink);
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.letterMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.letterTime { font-family: var(--font-ui); font-size: 0.75rem; color: var(--ink-faint); }
+.seen { font-family: var(--font-ui); font-size: 0.75rem; color: #2e7d32; }
+.pending { font-family: var(--font-ui); font-size: 0.75rem; color: var(--ink-faint); }
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font-size: 1.1rem;
+  padding: 0;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: auto;
+}
+.deleteBtn:hover { color: var(--accent); }

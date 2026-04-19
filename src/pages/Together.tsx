@@ -4,7 +4,7 @@ import { usePartner } from '../hooks/usePartner'
 import { useMeetup } from '../hooks/useMeetup'
 import { useMovies, type MovieStatus } from '../hooks/useMovies'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import styles from './Together.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -34,7 +34,7 @@ export default function Together() {
   const [movieNote, setMovieNote] = useState('')
   const [filter, setFilter] = useState<MovieStatus | 'all'>('all')
 
-  const partnerName = partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
 
   const handleSaveMeetup = () => {
     if (meetupDate) void saveMeetup(meetupDate, meetupNote)
@@ -52,7 +52,7 @@ export default function Together() {
 
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.container}>
 

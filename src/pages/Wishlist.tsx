@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useWishlist, type WishPriority } from '../hooks/useWishlist'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import { StarIllustration } from '../components/Illustrations'
 import styles from './Wishlist.module.css'
 
@@ -26,7 +26,7 @@ export default function Wishlist() {
   const [priority, setPriority] = useState<WishPriority>('medium')
   const [filter, setFilter] = useState<'all' | 'mine' | 'theirs'>('all')
 
-  const partnerName = partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,7 +45,7 @@ export default function Wishlist() {
 
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.container}>
         <div className={styles.illustration}><StarIllustration size={70} /></div>

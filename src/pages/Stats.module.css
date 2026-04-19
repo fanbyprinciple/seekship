@@ -7,25 +7,17 @@
   padding: 20px 16px 48px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-.title {
-  font-family: var(--font-ui);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin: 0;
-}
+.loading { color: var(--ink-faint); font-size: 1rem; margin: 0; font-family: var(--font-ui); }
 
-.loading { color: var(--ink-faint); font-size: 1rem; margin: 0; }
-
-/* Hero card */
+/* Hero */
 .heroCard {
   background: var(--ink);
   color: var(--paper);
   border-radius: 4px 14px 4px 12px / 12px 4px 12px 4px;
-  padding: 28px 24px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,94 +25,104 @@
   text-align: center;
   box-shadow: 5px 5px 0 var(--ink-light);
 }
-.heroNum {
-  font-family: var(--font-ui);
-  font-size: 3.5rem;
-  font-weight: 700;
-  line-height: 1;
-}
-.heroLabel {
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  opacity: 0.8;
-}
-.heroSub {
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  opacity: 0.6;
-  margin-top: 4px;
-}
+.heroNum { font-family: var(--font-ui); font-size: 3.5rem; font-weight: 700; line-height: 1; }
+.heroLabel { font-family: var(--font-ui); font-size: 1rem; opacity: 0.8; }
+.heroSub { font-family: var(--font-ui); font-size: 0.85rem; opacity: 0.6; margin-top: 4px; }
 
-/* Stat grid */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.statCard {
-  background: var(--paper-dark);
-  border: var(--sketch-border);
-  border-radius: 3px 10px 3px 9px / 8px 3px 9px 3px;
-  box-shadow: 3px 3px 0 var(--ink);
+/* Championship banner */
+.champ {
+  background: var(--accent-light);
+  border: 2px solid var(--accent);
+  border-radius: 3px 12px 4px 11px / 10px 3px 11px 4px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  text-align: center;
-}
-.statNum {
-  font-family: var(--font-ui);
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1;
-}
-.statLabel {
-  font-family: var(--font-ui);
-  font-size: 0.78rem;
-  color: var(--ink-light);
-  text-align: center;
-}
-
-/* Upcoming dates */
-.section {}
-.sectionTitle {
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--ink-faint);
-  margin: 0 0 10px;
-}
-.dateList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
   gap: 6px;
 }
-.dateItem {
+.champCrown { font-size: 1.8rem; line-height: 1; }
+.champText { font-family: var(--font-ui); font-size: 1rem; font-weight: 700; color: var(--ink); }
+.champScore {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: var(--paper-dark);
-  border: 1px solid var(--ink-faint);
-  border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px;
-}
-.dateName {
+  gap: 8px;
   font-family: var(--font-ui);
-  font-size: 0.9rem;
-  color: var(--ink);
+  font-size: 2rem;
+  font-weight: 800;
 }
-.daysLeft {
+.scoreWin { color: var(--accent); }
+.scoreLose { color: var(--ink-faint); }
+.scoreDash { color: var(--ink-faint); font-size: 1.5rem; }
+.champNames {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
   font-family: var(--font-ui);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--ink-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 4px;
 }
-.soon { color: var(--accent); }
+
+/* Battle rows */
+.battleList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.battleRow {
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+  gap: 8px;
+}
+.playerCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px 8px 3px 7px / 6px 3px 7px 3px;
+  padding: 10px 4px;
+  border: 2px solid transparent;
+}
+.winCell { background: var(--accent); border-color: var(--accent); }
+.loseCell { background: var(--paper-dark); border-color: var(--ink-faint); }
+.tieCell { background: var(--paper-dark); border-color: var(--ink-faint); }
+.playerNum {
+  font-family: var(--font-ui);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.winCell .playerNum { color: var(--paper); }
+
+.battleMid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  background: var(--paper-dark);
+  border: 1px solid var(--ink-faint);
+  border-radius: 3px;
+}
+.catEmoji { font-size: 1.2rem; }
+.catLabel { font-family: var(--font-ui); font-size: 0.75rem; color: var(--ink-light); text-align: center; }
+.winTag { font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700; color: var(--accent); }
+.tieTag { font-family: var(--font-ui); font-size: 0.7rem; color: var(--ink-faint); }
+
+/* Name row */
+.nameRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+.nameTag {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-light);
+}

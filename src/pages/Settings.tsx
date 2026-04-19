@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
@@ -16,8 +16,12 @@ export default function Settings() {
   const [confirmDisconnect, setConfirmDisconnect] = useState(false)
   const [newCode, setNewCode] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [nickname, setNickname] = useState<string>((userData?.partnerNickname as string | undefined) ?? '')
+  const [nickname, setNickname] = useState<string>('')
   const [nicknameSaved, setNicknameSaved] = useState(false)
+
+  useEffect(() => {
+    if (userData?.partnerNickname) setNickname(userData.partnerNickname as string)
+  }, [userData?.partnerNickname])
 
   const partnerDisplayName = partnerData?.displayName ?? 'your partner'
   const currentCode: string | undefined = userData?.inviteCode

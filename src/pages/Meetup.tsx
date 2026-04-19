@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useMeetup } from '../hooks/useMeetup'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import { CalendarIllustration } from '../components/Illustrations'
 import styles from './Meetup.module.css'
 
@@ -19,7 +19,7 @@ export default function Meetup() {
   const [note, setNote] = useState(meetup.note ?? '')
   const [saved, setSaved] = useState(false)
 
-  const partnerName = partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
 
   const handleSave = async () => {
     if (!date) return
@@ -30,7 +30,7 @@ export default function Meetup() {
 
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.container}>
         <div className={styles.illustration}>

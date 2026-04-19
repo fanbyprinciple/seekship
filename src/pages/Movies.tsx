@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useMovies, type MovieStatus } from '../hooks/useMovies'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import styles from './Movies.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -29,7 +29,7 @@ export default function Movies() {
   const [noteInput, setNoteInput] = useState('')
   const [filter, setFilter] = useState<MovieStatus | 'all'>('all')
 
-  const partnerName = partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,7 +43,7 @@ export default function Movies() {
 
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.container}>
         <h2 className={styles.title}>Watch List</h2>

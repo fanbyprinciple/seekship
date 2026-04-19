@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useGoals, type GoalStatus, type GoalCategory } from '../hooks/useGoals'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import styles from './Goals.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -33,7 +33,7 @@ export default function Goals() {
   const [filter, setFilter] = useState<GoalStatus | 'all'>('all')
   const [showForm, setShowForm] = useState(false)
 
-  const partnerName = partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,7 +55,7 @@ export default function Goals() {
 
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.container}>
         <div className={styles.header}>

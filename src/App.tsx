@@ -5,6 +5,7 @@ import { useNotifications } from './hooks/useNotifications'
 import Login from './pages/Login'
 import Invite from './pages/Invite'
 import Home from './pages/Home'
+import Note from './pages/Note'
 import Message from './pages/Message'
 import Checklist from './pages/Checklist'
 import Calendar from './pages/Calendar'
@@ -35,6 +36,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="/home" element={<Home />} />
+      <Route path="/note" element={<Note />} />
       <Route path="/message" element={<Message />} />
       <Route path="/checklist" element={<Checklist />} />
       <Route path="/calendar" element={<Calendar />} />

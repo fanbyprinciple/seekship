@@ -8,42 +8,68 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useImportantDates, daysUntil } from '../hooks/useImportantDates'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import styles from './Stats.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
 
-interface StatsData {
+interface PlayerStats {
   messagesSent: number
-  messagesReceived: number
-  panicTriggered: number
   goalsTotal: number
   goalsDone: number
   checklistTotal: number
   checklistDone: number
+  panics: number
+  moviesWatched: number
+  wishlistItems: number
+}
+
+interface CompareResult {
+  mine: PlayerStats
+  theirs: PlayerStats
   daysTogther: number | null
+}
+
+function winner(a: number, b: number): 'me' | 'them' | 'tie' {
+  if (a > b) return 'me'
+  if (b > a) return 'them'
+  return 'tie'
 }
 
 export default function Stats() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
   const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
-  const nickname = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const nickname = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'Partner'
+  const myName = user?.displayName?.split(' ')[0] ?? 'You'
   const { dates } = useImportantDates(pid)
-  const [stats, setStats] = useState<StatsData | null>(null)
+  const [result, setResult] = useState<CompareResult | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user?.uid || !userData?.partnerId || !pid) return
+    const partnerId = userData.partnerId as string
 
-    const fetch = async () => {
-      const [sentSnap, recvSnap, goalsSnap, checkSnap, panicSnap] = await Promise.all([
+    const load = async () => {
+      const [
+        mySentSnap, theirSentSnap,
+        goalsSnap, checkSnap,
+        panicSnap,
+        moviesSnap,
+        wishSnap,
+      ] = await Promise.all([
         getDocs(query(collection(db, 'messages'), where('fromUid', '==', user.uid))),
-        getDocs(query(collection(db, 'messages'), where('toUid', '==', user.uid))),
+        getDocs(query(collection(db, 'messages'), where('fromUid', '==', partnerId))),
         getDocs(collection(db, 'partnerships', pid, 'goals')),
         getDocs(collection(db, 'checklists', pid, 'items')),
         getDoc(doc(db, 'panics', pid)),
+        getDocs(collection(db, 'partnerships', pid, 'movies')),
+        getDocs(collection(db, 'wishlists', pid, 'items')),
       ])
+
+      const goalDocs = goalsSnap.docs.map(d => d.data())
+      const checkDocs = checkSnap.docs.map(d => d.data())
+      const panicData = panicSnap.exists() ? panicSnap.data() : null
 
       const anniversary = dates.find(d => d.type === 'anniversary')
       let daysTogther: number | null = null
@@ -53,104 +79,137 @@ export default function Stats() {
         daysTogther = Math.floor((Date.now() - start.getTime()) / 86400000)
       }
 
-      const goalsDocs = goalsSnap.docs.map(d => d.data())
-      const checkDocs = checkSnap.docs.map(d => d.data())
+      const myGoalsDone = goalDocs.filter(g => g.createdBy === user.uid && g.status === 'done').length
+      const theirGoalsDone = goalDocs.filter(g => g.createdBy === partnerId && g.status === 'done').length
+      const myGoalsTotal = goalDocs.filter(g => g.createdBy === user.uid).length
+      const theirGoalsTotal = goalDocs.filter(g => g.createdBy === partnerId).length
 
-      setStats({
-        messagesSent: sentSnap.size,
-        messagesReceived: recvSnap.size,
-        panicTriggered: panicSnap.exists() ? (panicSnap.data()?.triggerCount ?? 0) : 0,
-        goalsTotal: goalsDocs.length,
-        goalsDone: goalsDocs.filter(g => g.status === 'done').length,
-        checklistTotal: checkDocs.length,
-        checklistDone: checkDocs.filter(c => c.checked).length,
+      const myCheckDone = checkDocs.filter(c => c.createdBy === user.uid && c.checked).length
+      const theirCheckDone = checkDocs.filter(c => c.createdBy === partnerId && c.checked).length
+      const myCheckTotal = checkDocs.filter(c => c.createdBy === user.uid).length
+      const theirCheckTotal = checkDocs.filter(c => c.createdBy === partnerId).length
+
+      const moviesWatched = moviesSnap.docs.filter(d => d.data().watched).length
+      const wishlistCount = wishSnap.size
+
+      setResult({
         daysTogther,
+        mine: {
+          messagesSent: mySentSnap.size,
+          goalsTotal: myGoalsTotal,
+          goalsDone: myGoalsDone,
+          checklistTotal: myCheckTotal,
+          checklistDone: myCheckDone,
+          panics: panicData?.triggeredBy === user.uid ? (panicData?.triggerCount ?? 0) : 0,
+          moviesWatched,
+          wishlistItems: wishlistCount,
+        },
+        theirs: {
+          messagesSent: theirSentSnap.size,
+          goalsTotal: theirGoalsTotal,
+          goalsDone: theirGoalsDone,
+          checklistTotal: theirCheckTotal,
+          checklistDone: theirCheckDone,
+          panics: panicData?.triggeredBy === partnerId ? (panicData?.triggerCount ?? 0) : 0,
+          moviesWatched,
+          wishlistItems: wishlistCount,
+        },
       })
       setLoading(false)
     }
 
-    void fetch()
+    void load()
   }, [user?.uid, userData?.partnerId, pid, dates])
 
   const anniversary = dates.find(d => d.type === 'anniversary')
   const nextAnniv = anniversary ? daysUntil(anniversary.date) : null
 
+  const categories: { label: string; myVal: number; theirVal: number; emoji: string }[] = result ? [
+    { label: 'Notes sent', myVal: result.mine.messagesSent, theirVal: result.theirs.messagesSent, emoji: '💌' },
+    { label: 'Goals done', myVal: result.mine.goalsDone, theirVal: result.theirs.goalsDone, emoji: '🎯' },
+    { label: 'Tasks checked', myVal: result.mine.checklistDone, theirVal: result.theirs.checklistDone, emoji: '✅' },
+  ] : []
+
+  const myWins = categories.filter(c => winner(c.myVal, c.theirVal) === 'me').length
+  const theirWins = categories.filter(c => winner(c.myVal, c.theirVal) === 'them').length
+  const champion = myWins > theirWins ? myName : theirWins > myWins ? nickname : null
+
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.container}>
-        <h2 className={styles.title}>Stats</h2>
 
-        {loading && <p className={styles.loading}>Loading...</p>}
-
-        {!loading && stats && (
-          <>
-            {/* Days together */}
-            <div className={styles.heroCard}>
-              {stats.daysTogther !== null ? (
-                <>
-                  <span className={styles.heroNum}>{stats.daysTogther}</span>
-                  <span className={styles.heroLabel}>days together</span>
-                  {nextAnniv !== null && nextAnniv <= 30 && (
-                    <span className={styles.heroSub}>
-                      {nextAnniv === 0 ? 'Happy anniversary!' : `Anniversary in ${nextAnniv} day${nextAnniv === 1 ? '' : 's'}`}
-                    </span>
-                  )}
-                </>
-              ) : (
-                <span className={styles.heroLabel}>Add anniversary date in Calendar to see days together</span>
-              )}
-            </div>
-
-            {/* Grid of stats */}
-            <div className={styles.grid}>
-              <StatCard value={stats.messagesSent} label={`Notes sent`} />
-              <StatCard value={stats.messagesReceived} label={`Notes from ${nickname}`} />
-              <StatCard
-                value={`${stats.goalsDone}/${stats.goalsTotal}`}
-                label="Goals achieved"
-              />
-              <StatCard
-                value={`${stats.checklistDone}/${stats.checklistTotal}`}
-                label="Checklist done"
-              />
-            </div>
-
-            {/* Important upcoming dates */}
-            {dates.length > 0 && (
-              <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>Coming Up</h3>
-                <ul className={styles.dateList}>
-                  {[...dates]
-                    .sort((a, b) => daysUntil(a.date) - daysUntil(b.date))
-                    .slice(0, 5)
-                    .map(d => {
-                      const n = daysUntil(d.date)
-                      return (
-                        <li key={d.id} className={styles.dateItem}>
-                          <span className={styles.dateName}>{d.label}</span>
-                          <span className={`${styles.daysLeft} ${n <= 7 ? styles.soon : ''}`}>
-                            {n === 0 ? 'Today!' : n === 1 ? 'Tomorrow!' : `${n} days`}
-                          </span>
-                        </li>
-                      )
-                    })}
-                </ul>
-              </div>
+        {/* Hero: days together */}
+        {result?.daysTogther !== null && result?.daysTogther !== undefined ? (
+          <div className={styles.heroCard}>
+            <span className={styles.heroNum}>{result.daysTogther}</span>
+            <span className={styles.heroLabel}>days together</span>
+            {nextAnniv !== null && nextAnniv <= 30 && (
+              <span className={styles.heroSub}>
+                {nextAnniv === 0 ? '🎉 Happy anniversary!' : `Anniversary in ${nextAnniv} day${nextAnniv === 1 ? '' : 's'}`}
+              </span>
             )}
+          </div>
+        ) : (
+          <div className={styles.heroCard}>
+            <span className={styles.heroLabel}>Add anniversary in Calendar to see days together</span>
+          </div>
+        )}
+
+        {loading && <p className={styles.loading}>Loading stats...</p>}
+
+        {!loading && result && (
+          <>
+            {/* Championship banner */}
+            <div className={styles.champ}>
+              <span className={styles.champCrown}>🏆</span>
+              <span className={styles.champText}>
+                {champion ? `${champion} is winning!` : "It's a tie!"}
+              </span>
+              <div className={styles.champScore}>
+                <span className={myWins >= theirWins ? styles.scoreWin : styles.scoreLose}>{myWins}</span>
+                <span className={styles.scoreDash}>–</span>
+                <span className={theirWins >= myWins ? styles.scoreWin : styles.scoreLose}>{theirWins}</span>
+              </div>
+              <div className={styles.champNames}>
+                <span>{myName}</span>
+                <span>{nickname}</span>
+              </div>
+            </div>
+
+            {/* Category rows */}
+            <div className={styles.battleList}>
+              {categories.map(cat => {
+                const w = winner(cat.myVal, cat.theirVal)
+                return (
+                  <div key={cat.label} className={styles.battleRow}>
+                    <div className={`${styles.playerCell} ${w === 'me' ? styles.winCell : w === 'tie' ? styles.tieCell : styles.loseCell}`}>
+                      <span className={styles.playerNum}>{cat.myVal}</span>
+                    </div>
+                    <div className={styles.battleMid}>
+                      <span className={styles.catEmoji}>{cat.emoji}</span>
+                      <span className={styles.catLabel}>{cat.label}</span>
+                      {w === 'me' && <span className={styles.winTag}>← wins</span>}
+                      {w === 'them' && <span className={styles.winTag}>wins →</span>}
+                      {w === 'tie' && <span className={styles.tieTag}>tie</span>}
+                    </div>
+                    <div className={`${styles.playerCell} ${w === 'them' ? styles.winCell : w === 'tie' ? styles.tieCell : styles.loseCell}`}>
+                      <span className={styles.playerNum}>{cat.theirVal}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Name row */}
+            <div className={styles.nameRow}>
+              <span className={styles.nameTag}>{myName}</span>
+              <span className={styles.nameTag}>{nickname}</span>
+            </div>
           </>
         )}
       </div>
-    </div>
-  )
-}
-
-function StatCard({ value, label }: { value: string | number; label: string }) {
-  return (
-    <div className={styles.statCard}>
-      <span className={styles.statNum}>{value}</span>
-      <span className={styles.statLabel}>{label}</span>
     </div>
   )
 }

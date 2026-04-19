@@ -1,0 +1,114 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper-dark);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.withLabel {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  white-space: nowrap;
+}
+
+/* Panic */
+.panicWrap { position: relative; }
+
+.panicBtn {
+  background: #b71c1c;
+  color: #fff;
+  border: 2px solid #7f0000;
+  border-radius: 2px 6px 2px 5px / 4px 2px 5px 2px;
+  box-shadow: 2px 2px 0 #7f0000;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 2px 2px 0 #7f0000; }
+  50% { box-shadow: 2px 2px 0 #7f0000, 0 0 6px rgba(183,28,28,0.5); }
+}
+
+.panicMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--paper);
+  border: var(--sketch-border);
+  border-radius: 3px 8px 3px 7px;
+  box-shadow: 3px 3px 0 var(--ink);
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  min-width: 110px;
+  overflow: hidden;
+}
+.panicChoice {
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--ink-faint);
+  padding: 9px 14px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  font-weight: 600;
+}
+.panicChoice:last-child { border-bottom: none; }
+.panicChoice:hover { background: var(--accent-light); color: var(--accent); }
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  flex-shrink: 0;
+}
+
+.gearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: var(--sketch-border);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: 2px 2px 0 var(--ink);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.gearBtn:hover { transform: rotate(45deg); }
+
+.signOut {
+  background: none;
+  border: var(--sketch-border);
+  border-radius: 2px 5px 2px 4px;
+  color: var(--ink);
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-family: var(--font-ui);
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.signOut:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }

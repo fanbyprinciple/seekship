@@ -5,7 +5,7 @@ import { useCalendar, EVENT_META, type EventType } from '../hooks/useCalendar'
 import { useImportantDates, daysUntil, type DateType } from '../hooks/useImportantDates'
 import { useMood, MOOD_OPTIONS } from '../hooks/useMood'
 import Nav from '../components/Nav'
-import PageHeader from '../components/PageHeader'
+import TopBar from '../components/TopBar'
 import styles from './Calendar.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -25,6 +25,9 @@ export default function Calendar() {
   const [dateLabel, setDateLabel] = useState('')
   const [dateMMDD, setDateMMDD] = useState('')
   const [dateType, setDateType] = useState<DateType>('birthday')
+  const [showFriendForm, setShowFriendForm] = useState(false)
+  const [friendLabel, setFriendLabel] = useState('')
+  const [friendMMDD, setFriendMMDD] = useState('')
 
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
@@ -33,7 +36,7 @@ export default function Calendar() {
   const [addType, setAddType] = useState<EventType>('special')
   const [addNote, setAddNote] = useState('')
 
-  const partnerName = partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
 
   // Build calendar grid
   const firstDay = new Date(year, month, 1).getDay()
@@ -72,11 +75,19 @@ export default function Calendar() {
     setShowDateForm(false)
   }
 
+  const handleAddFriendDate = async () => {
+    if (!friendLabel.trim() || !friendMMDD || !user?.uid) return
+    await addDate({ label: friendLabel.trim(), date: friendMMDD, type: 'friend_birthday', createdBy: user.uid })
+    setFriendLabel('')
+    setFriendMMDD('')
+    setShowFriendForm(false)
+  }
+
   const monthName = new Date(year, month).toLocaleString('default', { month: 'long' })
 
   return (
     <div className={styles.page}>
-      <PageHeader />
+      <TopBar />
       <Nav />
       <div className={styles.container}>
 
@@ -140,7 +151,7 @@ export default function Calendar() {
             <span className={styles.moodTitle}>Today's mood</span>
             {partnerMood && (
               <span className={styles.partnerMoodDisplay}>
-                {partnerData?.displayName?.split(' ')[0] ?? 'Partner'}: {MOOD_OPTIONS.find(m => m.mood === partnerMood)?.emoji}
+                {partnerName}: {MOOD_OPTIONS.find(m => m.mood === partnerMood)?.emoji}
               </span>
             )}
           </div>
@@ -208,7 +219,7 @@ export default function Calendar() {
             </div>
           </div>
         )}
-        {/* Important Dates */}
+        {/* Important Dates — couple */}
         <div className={styles.importantSection}>
           <div className={styles.importantHeader}>
             <h3 className={styles.importantTitle}>Important Dates</h3>
@@ -221,7 +232,7 @@ export default function Calendar() {
             <div className={styles.dateForm}>
               <input
                 className={styles.noteInput}
-                placeholder="Label (e.g. Mom's birthday)"
+                placeholder="Label (e.g. Our anniversary)"
                 value={dateLabel}
                 onChange={e => setDateLabel(e.target.value)}
                 maxLength={50}
@@ -239,23 +250,23 @@ export default function Calendar() {
               </div>
               <input
                 className={styles.noteInput}
-                type="text"
-                placeholder="MM-DD (e.g. 04-25)"
-                value={dateMMDD}
-                onChange={e => setDateMMDD(e.target.value)}
-                maxLength={5}
-                pattern="\d{2}-\d{2}"
+                type="date"
+                value={dateMMDD ? `${new Date().getFullYear()}-${dateMMDD}` : ''}
+                onChange={e => {
+                  const v = e.target.value
+                  if (v) setDateMMDD(v.substring(5))
+                }}
               />
               <button className={styles.addBtn} onClick={() => void handleAddDate()}>Save Date</button>
             </div>
           )}
 
-          {dates.length === 0 && !showDateForm && (
+          {dates.filter(d => d.type !== 'friend_birthday').length === 0 && !showDateForm && (
             <p className={styles.emptyDates}>No important dates yet.</p>
           )}
 
           <ul className={styles.dateList}>
-            {[...dates].sort((a, b) => daysUntil(a.date) - daysUntil(b.date)).map(d => {
+            {[...dates].filter(d => d.type !== 'friend_birthday').sort((a, b) => daysUntil(a.date) - daysUntil(b.date)).map(d => {
               const n = daysUntil(d.date)
               return (
                 <li key={d.id} className={styles.dateItem}>
@@ -264,6 +275,60 @@ export default function Calendar() {
                     <span className={styles.dateMMDD}>{d.date}</span>
                   </div>
                   <span className={`${styles.daysLeft} ${n <= 1 ? styles.soon : ''}`}>
+                    {n === 0 ? 'Today!' : n === 1 ? 'Tomorrow!' : `${n}d`}
+                  </span>
+                  <button className={styles.deleteBtn} onClick={() => void removeDate(d.id)}>×</button>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+
+        {/* Friends & Family Birthdays */}
+        <div className={styles.importantSection}>
+          <div className={styles.importantHeader}>
+            <h3 className={styles.importantTitle}>Friends & Family 🎂</h3>
+            <button className={styles.addDateBtn} onClick={() => setShowFriendForm(f => !f)}>
+              {showFriendForm ? 'Cancel' : '+ Add'}
+            </button>
+          </div>
+
+          {showFriendForm && (
+            <div className={styles.dateForm}>
+              <input
+                className={styles.noteInput}
+                placeholder="Name (e.g. Mom's birthday)"
+                value={friendLabel}
+                onChange={e => setFriendLabel(e.target.value)}
+                maxLength={50}
+              />
+              <input
+                className={styles.noteInput}
+                type="date"
+                value={friendMMDD ? `${new Date().getFullYear()}-${friendMMDD}` : ''}
+                onChange={e => {
+                  const v = e.target.value
+                  if (v) setFriendMMDD(v.substring(5))
+                }}
+              />
+              <button className={styles.addBtn} onClick={() => void handleAddFriendDate()}>Save Birthday</button>
+            </div>
+          )}
+
+          {dates.filter(d => d.type === 'friend_birthday').length === 0 && !showFriendForm && (
+            <p className={styles.emptyDates}>No birthdays added yet. Reminders appear on Home 7 days before.</p>
+          )}
+
+          <ul className={styles.dateList}>
+            {[...dates].filter(d => d.type === 'friend_birthday').sort((a, b) => daysUntil(a.date) - daysUntil(b.date)).map(d => {
+              const n = daysUntil(d.date)
+              return (
+                <li key={d.id} className={`${styles.dateItem} ${styles.friendBirthday}`}>
+                  <div className={styles.dateInfo}>
+                    <span className={styles.dateName}>🎂 {d.label}</span>
+                    <span className={styles.dateMMDD}>{d.date}</span>
+                  </div>
+                  <span className={`${styles.daysLeft} ${n <= 7 ? styles.soon : ''}`}>
                     {n === 0 ? 'Today!' : n === 1 ? 'Tomorrow!' : `${n}d`}
                   </span>
                   <button className={styles.deleteBtn} onClick={() => void removeDate(d.id)}>×</button>
