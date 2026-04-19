@@ -12,6 +12,16 @@
 
 .loading { color: var(--ink-faint); font-size: 1rem; margin: 0; font-family: var(--font-ui); }
 
+.cacheNote {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0;
+  align-self: flex-end;
+}
+
 .sharedGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));

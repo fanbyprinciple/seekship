@@ -1,6 +1,11 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  CACHE_SIZE_UNLIMITED,
+} from 'firebase/firestore'
 import { getMessaging, isSupported } from 'firebase/messaging'
 
 const firebaseConfig = {
@@ -14,7 +19,18 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
-export const db = getFirestore(app)
+
+// Persistent IndexedDB cache so all onSnapshot hooks and getDocs calls
+// serve from local storage first and sync in the background. The
+// multi-tab manager coordinates cache across tabs so opening the app
+// twice doesn't break either tab's snapshots.
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED,
+  }),
+})
+
 export const googleProvider = new GoogleAuthProvider()
 
 export const getMessagingInstance = async () => {

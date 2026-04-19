@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  collection, query, where, getDocs, getCountFromServer, limit,
+  collection, query, where, getDocs, limit,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth'
@@ -40,10 +40,41 @@ const EMPTY_STATS: PlayerStats = {
   wishlistAdded: 0,
 }
 
+const CACHE_VERSION = 2
+interface CacheEntry { v: number; at: number; result: CompareResult }
+const cacheKey = (pid: string) => `seekship-stats:${pid}`
+
+function readCache(pid: string): CacheEntry | null {
+  try {
+    const raw = localStorage.getItem(cacheKey(pid))
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as CacheEntry
+    if (parsed.v !== CACHE_VERSION) return null
+    return parsed
+  } catch { return null }
+}
+
+function writeCache(pid: string, result: CompareResult) {
+  try {
+    const entry: CacheEntry = { v: CACHE_VERSION, at: Date.now(), result }
+    localStorage.setItem(cacheKey(pid), JSON.stringify(entry))
+  } catch { /* quota / private-mode — skip silently */ }
+}
+
 function winner(a: number, b: number): 'me' | 'them' | 'tie' {
   if (a > b) return 'me'
   if (b > a) return 'them'
   return 'tie'
+}
+
+function formatAge(ms: number): string {
+  const s = Math.floor(ms / 1000)
+  if (s < 60) return 'just now'
+  const m = Math.floor(s / 60)
+  if (m < 60) return `${m}m ago`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}h ago`
+  return `${Math.floor(h / 24)}d ago`
 }
 
 export default function Stats() {
@@ -54,31 +85,44 @@ export default function Stats() {
   const myName = user?.displayName?.split(' ')[0] ?? 'You'
   const { dates } = useImportantDates(pid)
   const [result, setResult] = useState<CompareResult | null>(null)
+  const [cachedAt, setCachedAt] = useState<number | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user?.uid || !userData?.partnerId || !pid) return
     const myUid = user.uid
     const partnerId = userData.partnerId as string
 
+    // 1) Hydrate from localStorage snapshot for an instant paint.
+    const cached = readCache(pid)
+    if (cached) {
+      setResult(cached.result)
+      setCachedAt(cached.at)
+    }
+
+    // 2) Always refresh in the background. Persistent Firestore cache
+    //    already serves recent reads quickly; localStorage gives us the
+    //    computed result without re-aggregating.
     const load = async () => {
-      setLoading(true)
+      setRefreshing(true)
       setError(null)
       try {
         const [
-          mySentCount, theirSentCount,
+          mySentSnap, theirSentSnap,
           goalsSnap, checkSnap, moviesSnap, wishSnap,
         ] = await Promise.all([
-          getCountFromServer(query(
+          getDocs(query(
             collection(db, 'messages'),
             where('fromUid', '==', myUid),
             where('toUid', '==', partnerId),
+            limit(1000),
           )),
-          getCountFromServer(query(
+          getDocs(query(
             collection(db, 'messages'),
             where('fromUid', '==', partnerId),
             where('toUid', '==', myUid),
+            limit(1000),
           )),
           getDocs(query(collection(db, 'partnerships', pid, 'goals'), limit(500))),
           getDocs(query(collection(db, 'checklists', pid, 'items'), limit(500))),
@@ -91,9 +135,12 @@ export default function Stats() {
         const movies = moviesSnap.docs.map(d => d.data())
         const wishes = wishSnap.docs.map(d => d.data())
 
+        const mySent = mySentSnap.size
+        const theirSent = theirSentSnap.size
+
         const mine: PlayerStats = {
-          messagesSent: mySentCount.data().count,
-          messagesRecv: theirSentCount.data().count,
+          messagesSent: mySent,
+          messagesRecv: theirSent,
           goalsCreated: goals.filter(g => g.addedBy === myUid).length,
           goalsDone: goals.filter(g => g.addedBy === myUid && g.status === 'done').length,
           tasksCreated: tasks.filter(t => t.addedBy === myUid).length,
@@ -103,8 +150,8 @@ export default function Stats() {
           wishlistAdded: wishes.filter(w => w.addedBy === myUid).length,
         }
         const theirs: PlayerStats = {
-          messagesSent: theirSentCount.data().count,
-          messagesRecv: mySentCount.data().count,
+          messagesSent: theirSent,
+          messagesRecv: mySent,
           goalsCreated: goals.filter(g => g.addedBy === partnerId).length,
           goalsDone: goals.filter(g => g.addedBy === partnerId && g.status === 'done').length,
           tasksCreated: tasks.filter(t => t.addedBy === partnerId).length,
@@ -122,17 +169,21 @@ export default function Stats() {
           daysTogether = Math.floor((Date.now() - start.getTime()) / 86400000)
         }
 
-        setResult({
+        const fresh: CompareResult = {
           mine, theirs,
           sharedMovies: movies.filter(m => m.status === 'finished').length,
           sharedTasks: tasks.filter(t => t.checked).length,
           totalMessages: mine.messagesSent + theirs.messagesSent,
           daysTogether,
-        })
+        }
+
+        setResult(fresh)
+        setCachedAt(Date.now())
+        writeCache(pid, fresh)
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Failed to load stats.')
+        setError(e instanceof Error ? e.message : 'Failed to refresh stats.')
       } finally {
-        setLoading(false)
+        setRefreshing(false)
       }
     }
 
@@ -163,11 +214,25 @@ export default function Stats() {
     ? (result.totalMessages / result.daysTogether).toFixed(1)
     : null
 
+  const hasResult = !!result
+  const showInitialLoading = !hasResult && refreshing && !error
+
   return (
     <div className={styles.page}>
       <TopBar />
       <Nav />
       <div className={styles.container}>
+
+        {/* Cache status banner */}
+        {hasResult && (
+          <p className={styles.cacheNote}>
+            {refreshing
+              ? 'Refreshing…'
+              : cachedAt
+                ? `Updated ${formatAge(Date.now() - cachedAt)}`
+                : ''}
+          </p>
+        )}
 
         {/* Hero: days together */}
         {result?.daysTogether !== null && result?.daysTogether !== undefined ? (
@@ -186,10 +251,10 @@ export default function Stats() {
           </div>
         )}
 
-        {loading && <p className={styles.loading}>Loading stats...</p>}
+        {showInitialLoading && <p className={styles.loading}>Loading stats…</p>}
         {error && <p className={styles.loading}>Stats error: {error}</p>}
 
-        {!loading && !error && result && (
+        {hasResult && result && (
           <>
             {/* Shared totals */}
             <div className={styles.sharedGrid}>
