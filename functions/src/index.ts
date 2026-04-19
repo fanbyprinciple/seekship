@@ -94,19 +94,19 @@ export const onNewMessage = onDocumentCreated('messages/{messageId}', async (eve
   })
 })
 
-// Panic triggered → push to partner
+// Panic triggered → push to BOTH partners. The partner gets the alert;
+// the activator gets a confirmation so their device also rings (useful
+// on iOS PWA where the activator's phone may be the one with the watch).
 export const onPanicTriggered = onDocumentWritten('panics/{partnershipId}', async (event) => {
   const after = event.data?.after.data()
   const before = event.data?.before.data()
 
-  // Only fire when panic transitions to active.
   if (!after?.active || before?.active) return
 
   const partnershipId: string = event.params.partnershipId
   const activatedBy: string = after.activatedBy
   const cause: string = after.cause
 
-  // partnershipId is sorted `uidA_uidB`. Guard against malformed docs.
   const uids = partnershipId.split('_')
   if (uids.length !== 2) {
     logger.warn('bad partnershipId shape', { partnershipId })
@@ -115,20 +115,41 @@ export const onPanicTriggered = onDocumentWritten('panics/{partnershipId}', asyn
   const partnerUid = uids.find(u => u !== activatedBy)
   if (!partnerUid) return
 
-  const token = await getToken(partnerUid)
-  if (!token) return
+  const [partnerToken, selfToken] = await Promise.all([
+    getToken(partnerUid),
+    getToken(activatedBy),
+  ])
 
-  const name = await senderFirstName(activatedBy)
+  const activatorName = await senderFirstName(activatedBy)
   const causeLabels: Record<string, string> = {
     food: 'is hungry', pain: 'is in pain', boredom: 'is bored',
   }
   const label = causeLabels[cause] ?? 'needs you'
+  const link = `${APP_BASE_URL.value()}/home`
 
-  await safeSend({
-    token,
-    toUid: partnerUid,
-    title: `${name} ${label}`,
-    body: 'Open the app now.',
-    link: `${APP_BASE_URL.value()}/home`,
-  })
+  const tasks: Promise<void>[] = []
+
+  if (partnerToken) {
+    tasks.push(safeSend({
+      token: partnerToken,
+      toUid: partnerUid,
+      title: `${activatorName} ${label}`,
+      body: 'Open the app now.',
+      link,
+    }))
+  } else {
+    logger.debug('partner has no fcm token — skip', { partnerUid })
+  }
+
+  if (selfToken) {
+    tasks.push(safeSend({
+      token: selfToken,
+      toUid: activatedBy,
+      title: `Panic sent to ${(await senderFirstName(partnerUid)) || 'partner'}`,
+      body: `Cause: ${cause}. Waiting for them to acknowledge.`,
+      link,
+    }))
+  }
+
+  await Promise.all(tasks)
 })

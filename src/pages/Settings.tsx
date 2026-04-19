@@ -4,6 +4,7 @@ import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
+import { useNotifications } from '../hooks/useNotifications'
 import Nav from '../components/Nav'
 import Logo from '../components/Logo'
 import ThemePicker from '../components/ThemePicker'
@@ -12,12 +13,26 @@ import styles from './Settings.module.css'
 export default function Settings() {
   const { user } = useAuth()
   const { userData, partnerData, disconnectPartner, regenerateCode } = usePartner(user?.uid)
+  const { permission, enableNotifications } = useNotifications(user?.uid)
   const navigate = useNavigate()
   const [confirmDisconnect, setConfirmDisconnect] = useState(false)
   const [newCode, setNewCode] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [nickname, setNickname] = useState<string>('')
   const [nicknameSaved, setNicknameSaved] = useState(false)
+  const [notifBusy, setNotifBusy] = useState(false)
+  const isStandalone =
+    typeof window !== 'undefined' &&
+    (window.matchMedia('(display-mode: standalone)').matches ||
+     ('standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone === true))
+  const isIOS = typeof window !== 'undefined' &&
+    /iP(ad|hone|od)/.test(window.navigator.userAgent)
+
+  const handleEnableNotifs = async () => {
+    setNotifBusy(true)
+    await enableNotifications()
+    setNotifBusy(false)
+  }
 
   useEffect(() => {
     if (userData?.partnerNickname) setNickname(userData.partnerNickname as string)
@@ -118,6 +133,41 @@ export default function Settings() {
                 </button>
               </div>
             </div>
+          )}
+        </div>
+
+        {/* Notifications */}
+        <div className={styles.card}>
+          <h3 className={styles.cardTitle}>Notifications</h3>
+          <p className={styles.hint}>
+            Panic alerts ring on both phones. Messages ping the recipient.
+            {isIOS && !isStandalone && (
+              <> On iPhone, tap <strong>Share → Add to Home Screen</strong> first — push only works from the installed app.</>
+            )}
+          </p>
+          {permission === 'granted' && (
+            <p className={styles.success}>Enabled on this device.</p>
+          )}
+          {permission === 'default' && (
+            <button
+              className={styles.outlineBtn}
+              onClick={() => void handleEnableNotifs()}
+              disabled={notifBusy}
+            >
+              {notifBusy ? 'Requesting…' : 'Enable notifications'}
+            </button>
+          )}
+          {permission === 'denied' && (
+            <p className={styles.hint}>
+              Blocked. Re-enable in your browser or phone settings for Seekship,
+              then reload this page.
+            </p>
+          )}
+          {permission === 'unsupported' && (
+            <p className={styles.hint}>
+              This browser can't receive push. Try Chrome on Android or Safari
+              on iOS 16.4+ (installed to home screen).
+            </p>
           )}
         </div>
 
