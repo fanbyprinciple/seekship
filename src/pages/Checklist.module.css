@@ -45,6 +45,7 @@
   box-shadow: inset 2px 2px 0 var(--paper-dark);
   padding: 11px 16px;
   color: var(--ink);
+  font-family: var(--font-content);
   font-size: 1.05rem;
   outline: none;
 }
@@ -137,6 +138,7 @@
 
 .itemText {
   flex: 1;
+  font-family: var(--font-content);
   font-size: 1.1rem;
   color: var(--ink);
   word-break: break-word;

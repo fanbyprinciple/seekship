@@ -181,6 +181,60 @@
 }
 .addBtn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink-light); }
 
+/* ── Mood Tracker ───────────────────────────────────────────── */
+.moodSection {
+  background: var(--paper-dark);
+  border: 1px solid var(--ink-faint);
+  border-radius: 3px 8px 3px 7px / 6px 3px 7px 3px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.moodHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.moodTitle {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-faint);
+}
+.partnerMoodDisplay {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-light);
+}
+.moodBtns {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.moodBtn {
+  background: var(--paper);
+  border: 1px solid var(--ink-faint);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.moodBtn:hover { transform: scale(1.2); box-shadow: 2px 2px 0 var(--ink-faint); }
+.moodActive {
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  transform: scale(1.1);
+}
+
 /* ── Important Dates ────────────────────────────────────────── */
 .importantSection {
   margin-top: 28px;

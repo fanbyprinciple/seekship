@@ -5,7 +5,7 @@
 .sub { color: var(--ink-light); font-size: 1rem; margin: 0; }
 
 .addForm { background: #fff; border: var(--sketch-border); border-radius: 3px 10px 3px 9px; box-shadow: 4px 4px 0 var(--ink); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-.input { background: var(--paper); border: var(--sketch-border); border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px; padding: 10px 14px; color: var(--ink); font-size: 1rem; outline: none; width: 100%; box-sizing: border-box; font-family: var(--font); }
+.input { background: var(--paper); border: var(--sketch-border); border-radius: 3px 7px 3px 6px / 5px 3px 6px 3px; padding: 10px 14px; color: var(--ink); font-size: 1rem; outline: none; width: 100%; box-sizing: border-box; font-family: var(--font-content); }
 .input::placeholder { color: var(--ink-faint); }
 .input:focus { box-shadow: 0 0 0 3px var(--accent-light); }
 
@@ -14,7 +14,7 @@
 .priorityBtn { background: var(--paper-dark); border: var(--sketch-border); border-radius: 3px 6px 3px 5px; padding: 5px 12px; font-size: 0.9rem; cursor: pointer; font-family: var(--font); color: var(--ink-light); box-shadow: 2px 2px 0 var(--ink-faint); }
 .priority_low { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
 .priority_medium { background: #fff8e1; color: #e65100; border-color: #e65100; }
-.priority_high { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+.priority_high { background: #b71c1c; color: #fff; border-color: #7f0000; }
 
 .addBtn { background: var(--ink); color: var(--paper); border: var(--sketch-border); border-radius: 2px 7px 2px 6px; box-shadow: 3px 3px 0 var(--ink-light); padding: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: var(--font); }
 .addBtn:hover { transform: translate(-1px,-1px); }
@@ -31,13 +31,13 @@
 
 .info { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .itemTop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.itemTitle { font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+.itemTitle { font-family: var(--font-content); font-size: 1.05rem; font-weight: 600; color: var(--ink); }
 .gifted .itemTitle { text-decoration: line-through; }
 
 .priorityTag { font-size: 0.75rem; padding: 2px 8px; border-radius: 3px; font-weight: 600; }
 .tag_low { background: #e8f5e9; color: #2e7d32; }
 .tag_medium { background: #fff8e1; color: #e65100; }
-.tag_high { background: var(--accent-light); color: var(--accent); }
+.tag_high { background: #b71c1c; color: #fff; }
 
 .itemLink { font-size: 0.85rem; color: #1565c0; text-underline-offset: 2px; }
 .addedBy { font-size: 0.78rem; color: var(--ink-faint); }

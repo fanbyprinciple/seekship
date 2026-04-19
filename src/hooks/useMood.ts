@@ -2,20 +2,26 @@ import { useState, useEffect } from 'react'
 import { doc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 
-export type Mood = 'happy' | 'okay' | 'sad' | 'stressed' | 'loved'
+export type Mood = 'happy' | 'average' | 'sad' | 'angry' | 'indifferent'
 
-export interface MoodEntry {
-  uid: string
-  mood: Mood
-  loggedAt: { seconds: number } | null
-}
+export const MOOD_OPTIONS: { mood: Mood; emoji: string; label: string }[] = [
+  { mood: 'happy',       emoji: '😊', label: 'Happy' },
+  { mood: 'average',     emoji: '😐', label: 'Average' },
+  { mood: 'sad',         emoji: '😢', label: 'Sad' },
+  { mood: 'angry',       emoji: '😠', label: 'Angry' },
+  { mood: 'indifferent', emoji: '😑', label: 'Indifferent' },
+]
 
 function todayKey(): string {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-export function useMood(partnershipId: string | null, myUid: string | undefined, partnerUid: string | undefined) {
+export function useMood(
+  partnershipId: string | null,
+  myUid: string | undefined,
+  partnerUid: string | undefined
+) {
   const [myMood, setMyMood] = useState<Mood | null>(null)
   const [partnerMood, setPartnerMood] = useState<Mood | null>(null)
 

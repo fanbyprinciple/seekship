@@ -7,7 +7,7 @@ const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY as string
 
 export function useNotifications(uid: string | undefined) {
   useEffect(() => {
-    if (!uid || !('Notification' in window)) return
+    if (!uid || !('Notification' in window) || !('serviceWorker' in navigator)) return
 
     const setup = async () => {
       const messaging = await getMessagingInstance()
@@ -17,12 +17,21 @@ export function useNotifications(uid: string | undefined) {
       if (permission !== 'granted') return
 
       try {
-        const token = await getToken(messaging, { vapidKey: VAPID_KEY })
+        // Explicit SW registration so it works with any base path
+        const swUrl = import.meta.env.BASE_URL + 'firebase-messaging-sw.js'
+        const registration = await navigator.serviceWorker.register(swUrl, {
+          scope: import.meta.env.BASE_URL,
+        })
+        await navigator.serviceWorker.ready
+
+        const token = await getToken(messaging, {
+          vapidKey: VAPID_KEY,
+          serviceWorkerRegistration: registration,
+        })
         if (token) {
           await updateDoc(doc(db, 'users', uid), { fcmToken: token })
         }
       } catch (e) {
-        // Notification permission blocked or SW not ready — non-fatal
         console.warn('FCM token error:', e)
       }
     }

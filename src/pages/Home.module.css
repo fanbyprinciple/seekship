@@ -18,8 +18,32 @@
 .headerRight {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
+
+.withLabel {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  white-space: nowrap;
+}
+
+.gearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: var(--sketch-border);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+  flex-shrink: 0;
+}
+.gearBtn:hover { transform: translate(-1px,-1px) rotate(30deg); box-shadow: 3px 3px 0 var(--ink); }
 
 .avatar {
   width: 30px;
@@ -206,6 +230,29 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+/* ── Quote ──────────────────────────────────────────────────── */
+.quoteCard {
+  width: 100%;
+  border-left: 3px solid var(--accent);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  background: var(--paper-dark);
+  border-radius: 0 4px 4px 0;
+}
+.quoteText {
+  font-family: var(--font-content);
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin: 0 0 4px;
+  line-height: 1.6;
+}
+.quoteAuthor {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  margin: 0;
 }
 
 /* ── Postcard ───────────────────────────────────────────────── */

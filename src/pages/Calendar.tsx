@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useCalendar, EVENT_META, type EventType } from '../hooks/useCalendar'
 import { useImportantDates, daysUntil, type DateType } from '../hooks/useImportantDates'
+import { useMood, MOOD_OPTIONS } from '../hooks/useMood'
 import Nav from '../components/Nav'
 import PageHeader from '../components/PageHeader'
 import styles from './Calendar.module.css'
@@ -19,6 +20,7 @@ export default function Calendar() {
   const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
   const { events, addEvent, deleteEvent } = useCalendar(pid)
   const { dates, addDate, removeDate } = useImportantDates(pid)
+  const { myMood, partnerMood, logMood } = useMood(pid, user?.uid, userData?.partnerId as string | undefined)
   const [showDateForm, setShowDateForm] = useState(false)
   const [dateLabel, setDateLabel] = useState('')
   const [dateMMDD, setDateMMDD] = useState('')
@@ -130,6 +132,30 @@ export default function Calendar() {
               {EVENT_META[type].emoji} {EVENT_META[type].label}
             </span>
           ))}
+        </div>
+
+        {/* Mood tracker */}
+        <div className={styles.moodSection}>
+          <div className={styles.moodHeader}>
+            <span className={styles.moodTitle}>Today's mood</span>
+            {partnerMood && (
+              <span className={styles.partnerMoodDisplay}>
+                {partnerData?.displayName?.split(' ')[0] ?? 'Partner'}: {MOOD_OPTIONS.find(m => m.mood === partnerMood)?.emoji}
+              </span>
+            )}
+          </div>
+          <div className={styles.moodBtns}>
+            {MOOD_OPTIONS.map(({ mood, emoji, label }) => (
+              <button
+                key={mood}
+                className={`${styles.moodBtn} ${myMood === mood ? styles.moodActive : ''}`}
+                onClick={() => void logMood(mood)}
+                title={label}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Selected day panel */}

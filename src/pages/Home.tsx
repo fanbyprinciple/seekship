@@ -9,31 +9,12 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useMessages } from '../hooks/useMessages'
 import { usePanic, type PanicCause } from '../hooks/usePanic'
-import { useMood, type Mood } from '../hooks/useMood'
 import { useImportantDates, daysUntil } from '../hooks/useImportantDates'
 import Nav from '../components/Nav'
 import Logo from '../components/Logo'
 import ThemePicker from '../components/ThemePicker'
 import PanicOverlay from '../components/PanicOverlay'
 import styles from './Home.module.css'
-
-const MOOD_OPTIONS: { mood: Mood; label: string; symbol: string }[] = [
-  { mood: 'happy',   label: 'Happy',    symbol: '◡' },
-  { mood: 'loved',   label: 'Loved',    symbol: '♡' },
-  { mood: 'okay',    label: 'Okay',     symbol: '◌' },
-  { mood: 'sad',     label: 'Sad',      symbol: '◠' },
-  { mood: 'stressed',label: 'Stressed', symbol: '⌁' },
-]
-
-function moodTint(my: Mood | null, partner: Mood | null): string {
-  const moods = [my, partner].filter(Boolean)
-  if (moods.includes('happy') && !moods.includes('sad') && !moods.includes('stressed'))
-    return 'rgba(255,236,153,0.25)'
-  if (moods.includes('loved')) return 'rgba(233,30,140,0.08)'
-  if (moods.includes('sad'))   return 'rgba(100,149,237,0.12)'
-  if (moods.includes('stressed')) return 'rgba(255,140,0,0.1)'
-  return 'transparent'
-}
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
 
@@ -55,6 +36,36 @@ function seenAt(seconds: number | undefined): string {
   return `seen ${new Date(seconds * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`
 }
 
+interface Quote { text: string; author: string }
+
+async function fetchQuote(): Promise<Quote> {
+  const today = new Date().toDateString()
+  const cachedDate = localStorage.getItem('seekship-quote-date')
+  if (cachedDate === today) {
+    const q = localStorage.getItem('seekship-quote')
+    if (q) return JSON.parse(q) as Quote
+  }
+  try {
+    const res = await fetch('https://dummyjson.com/quotes/random')
+    const data = await res.json() as { quote: string; author: string }
+    const quote: Quote = { text: data.quote, author: data.author }
+    localStorage.setItem('seekship-quote-date', today)
+    localStorage.setItem('seekship-quote', JSON.stringify(quote))
+    return quote
+  } catch {
+    return { text: 'Distance means so little when someone means so much.', author: 'Tom McNeal' }
+  }
+}
+
+function GearIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>
+  )
+}
+
 export default function Home() {
   const { user, logout } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
@@ -63,6 +74,7 @@ export default function Home() {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [quote, setQuote] = useState<Quote | null>(null)
 
   const partnerId: string | undefined = userData?.partnerId
   const nickname: string = (userData?.partnerNickname as string | undefined)
@@ -71,12 +83,15 @@ export default function Home() {
   const partnerTyping: boolean = partnerData?.isTyping ?? false
   const pid = user?.uid && partnerId ? partnershipId(user.uid, partnerId) : null
   const { panic, triggerPanic, dismissPanic } = usePanic(pid)
-  const { myMood, partnerMood, logMood } = useMood(pid, user?.uid, partnerId)
   const { upcoming } = useImportantDates(pid)
   const [showPanicPicker, setShowPanicPicker] = useState(false)
   const [dateBannerDismissed, setDateBannerDismissed] = useState(
     () => sessionStorage.getItem('seekship-date-banner') === 'dismissed'
   )
+
+  useEffect(() => {
+    void fetchQuote().then(setQuote)
+  }, [])
 
   const dismissDateBanner = () => {
     sessionStorage.setItem('seekship-date-banner', 'dismissed')
@@ -135,9 +150,10 @@ export default function Home() {
       />
 
       <header className={styles.header}>
-        <Logo size={32} />
+        <Logo size={28} />
         <div className={styles.headerRight}>
           <ThemePicker />
+          <span className={styles.withLabel}>with {nickname}</span>
           <div className={styles.panicWrapper}>
             <button className={styles.panicBtn} onClick={() => setShowPanicPicker(p => !p)}>
               Panic
@@ -153,7 +169,7 @@ export default function Home() {
             )}
           </div>
           {user?.photoURL && <img src={user.photoURL} className={styles.avatar} alt="" />}
-          <Link to="/settings" className={styles.headerBtn}>Settings</Link>
+          <Link to="/settings" className={styles.gearBtn} title="Settings"><GearIcon /></Link>
           <button className={styles.headerBtn} onClick={() => void logout()}>Sign out</button>
         </div>
       </header>
@@ -161,7 +177,7 @@ export default function Home() {
       <Nav />
 
       <main className={styles.main}>
-        {/* Date notifications */}
+        {/* Upcoming date banner */}
         {!dateBannerDismissed && upcoming.length > 0 && (
           <div className={styles.dateBanner}>
             <span>
@@ -174,34 +190,20 @@ export default function Home() {
           </div>
         )}
 
-        {/* Mood bar */}
-        <div className={styles.moodBar}>
-          <span className={styles.moodLabel}>You</span>
-          <div className={styles.moodBtns}>
-            {MOOD_OPTIONS.map(({ mood, label, symbol }) => (
-              <button
-                key={mood}
-                className={`${styles.moodBtn} ${myMood === mood ? styles.moodActive : ''}`}
-                onClick={() => void logMood(mood)}
-                title={label}
-              >
-                {symbol}
-              </button>
-            ))}
+        {/* Quote of the day */}
+        {quote && (
+          <div className={styles.quoteCard}>
+            <p className={styles.quoteText}>"{quote.text}"</p>
+            <p className={styles.quoteAuthor}>— {quote.author}</p>
           </div>
-          {partnerMood && (
-            <span className={styles.partnerMood} title={`${nickname}'s mood`}>
-              {MOOD_OPTIONS.find(m => m.mood === partnerMood)?.symbol ?? ''}
-            </span>
-          )}
-        </div>
+        )}
 
         {partnerTyping && (
           <div className={styles.typingBanner}>{nickname} is writing something...</div>
         )}
 
         {/* Postcard compose */}
-        <div className={styles.postcard} style={{ background: moodTint(myMood, partnerMood) === 'transparent' ? undefined : `linear-gradient(${moodTint(myMood, partnerMood)}, ${moodTint(myMood, partnerMood)}), #fffef8` }}>
+        <div className={styles.postcard}>
           <div className={styles.postcardHeader}>
             <span className={styles.postcardTo}>To: {nickname}</span>
             <div className={styles.stamp}>
@@ -274,3 +276,4 @@ export default function Home() {
     </div>
   )
 }
+
