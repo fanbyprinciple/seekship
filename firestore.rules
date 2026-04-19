@@ -2,44 +2,102 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Exact partnership membership: partnershipId must equal sorted "uidA_uidB"
+    // that contains the caller. Guards against substring spoofing where
+    // uid "123" would match "1234_5678".
+    function isInPartnership(partnershipId) {
+      return request.auth != null &&
+        partnershipId.split('_').size() == 2 &&
+        (partnershipId.split('_')[0] == request.auth.uid ||
+         partnershipId.split('_')[1] == request.auth.uid);
+    }
+
+    function isSelf(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function isPartnerOf(uid) {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.partnerId == uid;
+    }
+
     match /users/{uid} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
-      allow update: if request.auth != null &&
+      allow read: if isSelf(uid) || isPartnerOf(uid);
+
+      allow create: if isSelf(uid) &&
+        !('partnerId' in request.resource.data);
+
+      // Self-update on whitelisted fields.
+      allow update: if isSelf(uid) &&
         request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['partnerId', 'inviteCode', 'isTyping', 'fcmToken']);
+          .hasOnly([
+            'partnerId', 'inviteCode', 'isTyping', 'fcmToken',
+            'partnerNickname', 'displayName', 'photoURL', 'email',
+            'geminiKey'
+          ]);
+
+      // Partner-link: another user may set partnerId on this doc but only
+      // to their own uid (invite redeem writes both sides in a tx).
+      allow update: if request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partnerId']) &&
+        request.resource.data.partnerId == request.auth.uid;
+
+      // Partner-unlink: the existing partner may clear partnerId.
+      allow update: if request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partnerId']) &&
+        resource.data.partnerId == request.auth.uid &&
+        !('partnerId' in request.resource.data);
+
+      allow delete: if isSelf(uid);
     }
 
     match /inviteCodes/{code} {
-      allow read, write: if request.auth != null;
+      // Any authed user can read (to check validity) and create their own code.
+      allow read: if request.auth != null;
+      allow create: if request.auth != null &&
+        request.resource.data.fromUid == request.auth.uid &&
+        request.resource.data.used == false;
+      // Only creator or redeemer can flip "used".
+      allow update: if request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used']);
+      allow delete: if request.auth != null &&
+        resource.data.fromUid == request.auth.uid;
     }
 
     match /messages/{messageId} {
       allow create: if request.auth != null &&
-        request.auth.uid == request.resource.data.fromUid;
-      allow read, update, delete: if request.auth != null &&
+        request.auth.uid == request.resource.data.fromUid &&
+        request.resource.data.text is string &&
+        request.resource.data.text.size() > 0 &&
+        request.resource.data.text.size() <= 500;
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.fromUid ||
+         request.auth.uid == resource.data.toUid);
+      // Recipient may acknowledge; either party may delete.
+      allow update: if request.auth != null &&
+        request.auth.uid == resource.data.toUid &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['acknowledged', 'acknowledgedAt']);
+      allow delete: if request.auth != null &&
         (request.auth.uid == resource.data.fromUid ||
          request.auth.uid == resource.data.toUid);
     }
 
     match /panics/{partnershipId} {
-      allow read, write: if request.auth != null &&
-        partnershipId.matches('.*' + request.auth.uid + '.*');
+      allow read, write: if isInPartnership(partnershipId);
     }
 
     match /checklists/{partnershipId}/items/{itemId} {
-      allow read, write: if request.auth != null &&
-        partnershipId.matches('.*' + request.auth.uid + '.*');
+      allow read, write: if isInPartnership(partnershipId);
     }
 
     match /partnerships/{partnershipId} {
-      allow read, write: if request.auth != null &&
-        partnershipId.matches('.*' + request.auth.uid + '.*');
-    }
+      allow read, write: if isInPartnership(partnershipId);
 
-    match /partnerships/{partnershipId}/{subcollection}/{docId} {
-      allow read, write: if request.auth != null &&
-        partnershipId.matches('.*' + request.auth.uid + '.*');
+      match /{subcollection}/{docId} {
+        allow read, write: if isInPartnership(partnershipId);
+      }
     }
   }
 }

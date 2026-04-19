@@ -10,6 +10,7 @@ import { useMessages } from '../hooks/useMessages'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Note.module.css'
+import { partnerNickname } from '../utils/partnership'
 
 
 function timeAgo(seconds: number | undefined): string {
@@ -40,9 +41,7 @@ export default function Note() {
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const partnerId: string | undefined = userData?.partnerId
-  const nickname: string = (userData?.partnerNickname as string | undefined)
-    ?? partnerData?.displayName?.split(' ')[0]
-    ?? 'love'
+  const nickname = partnerNickname(userData, partnerData, 'love')
   const partnerTyping: boolean = partnerData?.isTyping ?? false
 
   const handleTextChange = async (val: string) => {

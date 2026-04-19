@@ -1,4 +1,4 @@
-.page { min-height: 100vh; background: var(--paper); display: flex; flex-direction: column; }
+.page { min-height: 100vh; min-height: 100dvh; background: var(--paper); display: flex; flex-direction: column; }
 
 .container {
   max-width: 560px;
@@ -148,5 +148,5 @@
 .watching { background: #e3f2fd; color: #1565c0; border-color: #1565c0; }
 .finished { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
 
-.deleteBtn { background: none; border: none; color: var(--ink-faint); font-size: 1.2rem; cursor: pointer; padding: 0 4px; }
+.deleteBtn { background: none; border: none; color: var(--ink-faint); font-size: 1.2rem; cursor: pointer; padding: 0 8px; min-width: 44px; min-height: 44px; }
 .deleteBtn:hover { color: var(--accent); }

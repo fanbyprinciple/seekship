@@ -5,8 +5,7 @@ import { useMovies, type MovieStatus } from '../hooks/useMovies'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Movies.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 const STATUS_LABELS: Record<MovieStatus, string> = {
   want_to_watch: 'Want to watch',
@@ -22,14 +21,14 @@ const STATUS_NEXT: Record<MovieStatus, MovieStatus> = {
 export default function Movies() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
   const { movies, addMovie, updateStatus, deleteMovie } = useMovies(pid)
 
   const [titleInput, setTitleInput] = useState('')
   const [noteInput, setNoteInput] = useState('')
   const [filter, setFilter] = useState<MovieStatus | 'all'>('all')
 
-  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = partnerNickname(userData, partnerData)
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault()

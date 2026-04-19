@@ -9,4 +9,19 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     },
   },
+  build: {
+    target: 'es2020',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        // Split heavy vendor chunks so pages don't ship them eagerly.
+        manualChunks: {
+          'firebase-core': ['firebase/app', 'firebase/auth'],
+          'firebase-data': ['firebase/firestore'],
+          'firebase-push': ['firebase/messaging'],
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+  },
 })

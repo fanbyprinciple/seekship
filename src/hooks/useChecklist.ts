@@ -12,6 +12,7 @@ import {
   type DocumentData,
 } from 'firebase/firestore'
 import { db } from '../firebase'
+import { partnershipId } from '../utils/partnership'
 
 export interface ChecklistItem {
   id: string
@@ -19,10 +20,6 @@ export interface ChecklistItem {
   checked: boolean
   addedBy: string
   createdAt: DocumentData
-}
-
-function partnershipId(uid1: string, uid2: string): string {
-  return [uid1, uid2].sort().join('_')
 }
 
 export function useChecklist(uid: string | undefined, partnerId: string | undefined) {

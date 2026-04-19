@@ -6,8 +6,7 @@ import { useMovies, type MovieStatus } from '../hooks/useMovies'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Together.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 const STATUS_LABELS: Record<MovieStatus, string> = {
   want_to_watch: '📋 Want to watch',
@@ -23,7 +22,7 @@ const STATUS_NEXT: Record<MovieStatus, MovieStatus> = {
 export default function Together() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
 
   const { meetup, saveMeetup, daysUntil } = useMeetup(pid)
   const { movies, addMovie, updateStatus, deleteMovie } = useMovies(pid)
@@ -34,7 +33,7 @@ export default function Together() {
   const [movieNote, setMovieNote] = useState('')
   const [filter, setFilter] = useState<MovieStatus | 'all'>('all')
 
-  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = partnerNickname(userData, partnerData)
 
   const handleSaveMeetup = () => {
     if (meetupDate) void saveMeetup(meetupDate, meetupNote)

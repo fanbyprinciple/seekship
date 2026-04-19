@@ -1,4 +1,4 @@
-.page { min-height: 100vh; background: var(--paper); display: flex; flex-direction: column; }
+.page { min-height: 100vh; min-height: 100dvh; background: var(--paper); display: flex; flex-direction: column; }
 
 .container {
   max-width: 500px;
@@ -130,7 +130,7 @@
 }
 .eventNote { color: var(--ink-light); font-style: italic; flex: 1; }
 .eventBy { font-size: 0.78rem; color: var(--ink-faint); white-space: nowrap; }
-.deleteBtn { background: none; border: none; color: var(--ink-faint); font-size: 1.1rem; cursor: pointer; padding: 0; }
+.deleteBtn { background: none; border: none; color: var(--ink-faint); font-size: 1.1rem; cursor: pointer; padding: 0 8px; min-width: 44px; min-height: 44px; }
 .deleteBtn:hover { color: var(--accent); }
 
 .addEventForm { display: flex; flex-direction: column; gap: 8px; }

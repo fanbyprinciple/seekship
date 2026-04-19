@@ -8,8 +8,7 @@ import { useMeetup } from '../hooks/useMeetup'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Home.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 interface Quote { text: string; author: string }
 
@@ -34,18 +33,14 @@ async function fetchQuote(): Promise<Quote> {
 export default function Home() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId
-    ? partnershipId(user.uid, userData.partnerId as string)
-    : null
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
   const { dates, upcoming } = useImportantDates(pid)
   const { daysUntil: meetupDays, meetup } = useMeetup(pid)
   const [quote, setQuote] = useState<Quote | null>(null)
   const [nicknameInput, setNicknameInput] = useState('')
   const [savingNick, setSavingNick] = useState(false)
 
-  const nickname: string = (userData?.partnerNickname as string | undefined)
-    ?? partnerData?.displayName?.split(' ')[0]
-    ?? 'love'
+  const nickname = partnerNickname(userData, partnerData, 'love')
 
   const showNicknamePrompt = !!(userData?.partnerId && !userData?.partnerNickname)
 

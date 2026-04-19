@@ -6,8 +6,7 @@ import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import { StarIllustration } from '../components/Illustrations'
 import styles from './Wishlist.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 const PRIORITY_LABELS: Record<WishPriority, string> = {
   high: 'High',
@@ -18,7 +17,7 @@ const PRIORITY_LABELS: Record<WishPriority, string> = {
 export default function Wishlist() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
   const { items, addItem, markGifted, deleteItem } = useWishlist(pid)
 
   const [title, setTitle] = useState('')
@@ -26,7 +25,7 @@ export default function Wishlist() {
   const [priority, setPriority] = useState<WishPriority>('medium')
   const [filter, setFilter] = useState<'all' | 'mine' | 'theirs'>('all')
 
-  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = partnerNickname(userData, partnerData)
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault()

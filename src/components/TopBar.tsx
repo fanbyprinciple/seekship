@@ -7,8 +7,7 @@ import Logo from './Logo'
 import ThemePicker from './ThemePicker'
 import PanicOverlay from './PanicOverlay'
 import styles from './TopBar.module.css'
-
-function pid(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 function GearIcon() {
   return (
@@ -22,15 +21,11 @@ function GearIcon() {
 export default function TopBar() {
   const { user, logout } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const partnershipId = user?.uid && userData?.partnerId
-    ? pid(user.uid, userData.partnerId as string)
-    : null
+  const partnershipId = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
   const { panic, triggerPanic, dismissPanic } = usePanic(partnershipId)
   const [showPicker, setShowPicker] = useState(false)
 
-  const nickname: string = (userData?.partnerNickname as string | undefined)
-    ?? partnerData?.displayName?.split(' ')[0]
-    ?? 'love'
+  const nickname = partnerNickname(userData, partnerData, 'love')
 
   const handlePanic = async (cause: PanicCause) => {
     if (!user?.uid) return

@@ -5,8 +5,7 @@ import { useGoals, type GoalStatus, type GoalCategory } from '../hooks/useGoals'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Goals.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 const STATUS_LABELS: Record<GoalStatus, string> = {
   not_started: 'Not started',
@@ -23,7 +22,7 @@ const CATEGORIES: GoalCategory[] = ['relationship', 'travel', 'personal', 'finan
 export default function Goals() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
   const { goals, addGoal, updateStatus, deleteGoal } = useGoals(pid)
 
   const [title, setTitle] = useState('')
@@ -33,7 +32,7 @@ export default function Goals() {
   const [filter, setFilter] = useState<GoalStatus | 'all'>('all')
   const [showForm, setShowForm] = useState(false)
 
-  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = partnerNickname(userData, partnerData)
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()

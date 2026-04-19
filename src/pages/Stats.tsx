@@ -10,8 +10,7 @@ import { useImportantDates, daysUntil } from '../hooks/useImportantDates'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Stats.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 interface PlayerStats {
   messagesSent: number
@@ -39,8 +38,8 @@ function winner(a: number, b: number): 'me' | 'them' | 'tie' {
 export default function Stats() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
-  const nickname = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'Partner'
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
+  const nickname = partnerNickname(userData, partnerData, 'Partner')
   const myName = user?.displayName?.split(' ')[0] ?? 'You'
   const { dates } = useImportantDates(pid)
   const [result, setResult] = useState<CompareResult | null>(null)

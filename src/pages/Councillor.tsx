@@ -9,8 +9,7 @@ import { usePartner } from '../hooks/usePartner'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Councillor.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 interface ChatMsg {
   role: 'user' | 'model'
@@ -69,12 +68,8 @@ async function buildContext(pid: string, uid: string): Promise<string> {
 export default function Councillor() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId
-    ? partnershipId(user.uid, userData.partnerId)
-    : null
-  const nickname = (userData?.partnerNickname as string | undefined)
-    ?? partnerData?.displayName?.split(' ')[0]
-    ?? 'partner'
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
+  const nickname = partnerNickname(userData, partnerData)
 
   const [apiKey, setApiKey] = useState<string>((userData?.geminiKey as string | undefined) ?? '')
   const [keyInput, setKeyInput] = useState('')

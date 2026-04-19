@@ -6,20 +6,19 @@ import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import { CalendarIllustration } from '../components/Illustrations'
 import styles from './Meetup.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 export default function Meetup() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
   const { meetup, saveMeetup, daysUntil } = useMeetup(pid)
 
   const [date, setDate] = useState(meetup.date ?? '')
   const [note, setNote] = useState(meetup.note ?? '')
   const [saved, setSaved] = useState(false)
 
-  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = partnerNickname(userData, partnerData)
 
   const handleSave = async () => {
     if (!date) return

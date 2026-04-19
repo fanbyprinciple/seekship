@@ -7,8 +7,7 @@ import { useMood, MOOD_OPTIONS } from '../hooks/useMood'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Calendar.module.css'
-
-function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
+import { maybePartnershipId, partnerNickname } from '../utils/partnership'
 
 function toYMD(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -17,7 +16,7 @@ function toYMD(year: number, month: number, day: number): string {
 export default function Calendar() {
   const { user } = useAuth()
   const { userData, partnerData } = usePartner(user?.uid)
-  const pid = user?.uid && userData?.partnerId ? partnershipId(user.uid, userData.partnerId) : null
+  const pid = maybePartnershipId(user?.uid, userData?.partnerId as string | undefined)
   const { events, addEvent, deleteEvent } = useCalendar(pid)
   const { dates, addDate, removeDate } = useImportantDates(pid)
   const { myMood, partnerMood, logMood } = useMood(pid, user?.uid, userData?.partnerId as string | undefined)
@@ -36,7 +35,7 @@ export default function Calendar() {
   const [addType, setAddType] = useState<EventType>('special')
   const [addNote, setAddNote] = useState('')
 
-  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = partnerNickname(userData, partnerData)
 
   // Build calendar grid
   const firstDay = new Date(year, month, 1).getDay()

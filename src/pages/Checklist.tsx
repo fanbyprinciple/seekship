@@ -5,6 +5,7 @@ import { useChecklist } from '../hooks/useChecklist'
 import Nav from '../components/Nav'
 import TopBar from '../components/TopBar'
 import styles from './Checklist.module.css'
+import { partnerNickname } from '../utils/partnership'
 
 export default function Checklist() {
   const { user } = useAuth()
@@ -12,7 +13,7 @@ export default function Checklist() {
   const { items, addItem, toggleItem, deleteItem } = useChecklist(user?.uid, userData?.partnerId)
   const [input, setInput] = useState('')
 
-  const partnerName = (userData?.partnerNickname as string | undefined) ?? partnerData?.displayName?.split(' ')[0] ?? 'partner'
+  const partnerName = partnerNickname(userData, partnerData)
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
