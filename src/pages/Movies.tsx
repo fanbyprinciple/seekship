@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useMovies, type MovieStatus } from '../hooks/useMovies'
 import Nav from '../components/Nav'
+import PageHeader from '../components/PageHeader'
 import styles from './Movies.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -42,6 +43,7 @@ export default function Movies() {
 
   return (
     <div className={styles.page}>
+      <PageHeader />
       <Nav />
       <div className={styles.container}>
         <h2 className={styles.title}>Watch List</h2>

@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useCalendar, EVENT_META, type EventType } from '../hooks/useCalendar'
 import Nav from '../components/Nav'
+import PageHeader from '../components/PageHeader'
 import styles from './Calendar.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -59,6 +60,7 @@ export default function Calendar() {
 
   return (
     <div className={styles.page}>
+      <PageHeader />
       <Nav />
       <div className={styles.container}>
 

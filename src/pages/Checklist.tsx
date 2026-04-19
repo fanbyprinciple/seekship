@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useChecklist } from '../hooks/useChecklist'
 import Nav from '../components/Nav'
+import PageHeader from '../components/PageHeader'
 import styles from './Checklist.module.css'
 
 export default function Checklist() {
@@ -24,6 +25,7 @@ export default function Checklist() {
 
   return (
     <div className={styles.page}>
+      <PageHeader />
       <Nav />
       <div className={styles.container}>
         <div className={styles.header}>

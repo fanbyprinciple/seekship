@@ -15,6 +15,7 @@ import { db } from '../firebase'
 import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import Nav from '../components/Nav'
+import PageHeader from '../components/PageHeader'
 import styles from './Message.module.css'
 
 export default function Message() {
@@ -57,6 +58,7 @@ export default function Message() {
 
   return (
     <div className={styles.page}>
+      <PageHeader />
       <Nav />
       <div className={styles.fullscreen}>
         {!incomingMessage ? (

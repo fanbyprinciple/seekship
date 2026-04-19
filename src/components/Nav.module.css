@@ -20,7 +20,7 @@
   border-right: 1px solid var(--ink-faint);
   white-space: nowrap;
   transition: background 0.1s;
-  font-family: var(--font);
+  font-family: var(--font-ui);
 }
 
 .link:last-child, .active:last-child { border-right: none; }

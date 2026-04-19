@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePartner } from '../hooks/usePartner'
 import { useWishlist, type WishPriority } from '../hooks/useWishlist'
 import Nav from '../components/Nav'
+import PageHeader from '../components/PageHeader'
 import { StarIllustration } from '../components/Illustrations'
 import styles from './Wishlist.module.css'
 
@@ -44,6 +45,7 @@ export default function Wishlist() {
 
   return (
     <div className={styles.page}>
+      <PageHeader />
       <Nav />
       <div className={styles.container}>
         <div className={styles.illustration}><StarIllustration size={70} /></div>

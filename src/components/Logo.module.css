@@ -1,0 +1,15 @@
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.wordmark {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}

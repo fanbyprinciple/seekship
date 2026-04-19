@@ -1,26 +1,70 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
-
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-:root {
-  --paper: #fdf6e3;
-  --paper-dark: #f0e6c8;
-  --ink: #2c2416;
-  --ink-light: #6b5a3e;
-  --ink-faint: #b8a88a;
-  --accent: #c0392b;
-  --accent-light: #fadbd8;
-  --sketch-shadow: 3px 3px 0 #2c2416;
-  --sketch-border: 2px solid #2c2416;
-  --font: 'Caveat', cursive;
+/* ── Theme tokens ───────────────────────────────────────────── */
+:root,
+[data-theme="white"] {
+  --paper: #ffffff;
+  --paper-dark: #f0f0f0;
+  --ink: #1a1a1a;
+  --ink-light: #555555;
+  --ink-faint: #aaaaaa;
+  --accent: #444444;
+  --accent-light: #eeeeee;
+  --sketch-shadow: 3px 3px 0 #1a1a1a;
+  --sketch-border: 2px solid #1a1a1a;
+  --font-ui: 'Inter', sans-serif;
+  --font-content: 'Homemade Apple', cursive;
 }
 
+[data-theme="pink"] {
+  --paper: #fff0f5;
+  --paper-dark: #ffd6e7;
+  --ink: #4a1030;
+  --ink-light: #8b4060;
+  --ink-faint: #c9849e;
+  --accent: #e91e8c;
+  --accent-light: #fde8f3;
+  --sketch-shadow: 3px 3px 0 #4a1030;
+  --sketch-border: 2px solid #4a1030;
+  --font-ui: 'Inter', sans-serif;
+  --font-content: 'Homemade Apple', cursive;
+}
+
+[data-theme="purple"] {
+  --paper: #f5f0ff;
+  --paper-dark: #e0d4ff;
+  --ink: #2d1b5e;
+  --ink-light: #5b3b9e;
+  --ink-faint: #9c7dcc;
+  --accent: #7c3aed;
+  --accent-light: #ede9fe;
+  --sketch-shadow: 3px 3px 0 #2d1b5e;
+  --sketch-border: 2px solid #2d1b5e;
+  --font-ui: 'Inter', sans-serif;
+  --font-content: 'Homemade Apple', cursive;
+}
+
+[data-theme="dark"] {
+  --paper: #1a1a2e;
+  --paper-dark: #16213e;
+  --ink: #e8e0ff;
+  --ink-light: #b0a8d8;
+  --ink-faint: #6b6490;
+  --accent: #a78bfa;
+  --accent-light: #2d2650;
+  --sketch-shadow: 3px 3px 0 #a78bfa;
+  --sketch-border: 2px solid #a78bfa;
+  --font-ui: 'Inter', sans-serif;
+  --font-content: 'Homemade Apple', cursive;
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
 html, body {
   margin: 0;
   padding: 0;
-  font-family: var(--font);
+  font-family: var(--font-ui);
   background: var(--paper);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -29,25 +73,28 @@ html, body {
 #root {
   min-height: 100vh;
   background: var(--paper);
-  /* subtle paper grain */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
-/* Reusable sketch card */
 .sketch-card {
-  background: #fff;
+  background: var(--paper);
   border: var(--sketch-border);
   border-radius: 2px 8px 3px 7px / 6px 2px 7px 3px;
   box-shadow: var(--sketch-shadow);
 }
 
 button {
-  font-family: var(--font);
-  font-size: 1rem;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
   cursor: pointer;
 }
 
-input, textarea {
-  font-family: var(--font);
-  font-size: 1rem;
+input, select {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+}
+
+textarea {
+  font-family: var(--font-content);
+  font-size: 1.1rem;
 }

@@ -3,7 +3,6 @@ import styles from './Nav.module.css'
 
 const links = [
   { to: '/home',      label: 'Note' },
-  { to: '/message',   label: 'Inbox' },
   { to: '/checklist', label: 'List' },
   { to: '/calendar',  label: 'Calendar' },
   { to: '/meetup',    label: 'Meetup' },

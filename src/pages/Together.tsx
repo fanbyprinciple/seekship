@@ -4,6 +4,7 @@ import { usePartner } from '../hooks/usePartner'
 import { useMeetup } from '../hooks/useMeetup'
 import { useMovies, type MovieStatus } from '../hooks/useMovies'
 import Nav from '../components/Nav'
+import PageHeader from '../components/PageHeader'
 import styles from './Together.module.css'
 
 function partnershipId(a: string, b: string) { return [a, b].sort().join('_') }
@@ -51,6 +52,7 @@ export default function Together() {
 
   return (
     <div className={styles.page}>
+      <PageHeader />
       <Nav />
       <div className={styles.container}>
 

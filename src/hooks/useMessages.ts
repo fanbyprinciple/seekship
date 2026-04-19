@@ -12,6 +12,7 @@ export interface Message {
   text: string
   acknowledged: boolean
   sentAt: { seconds: number } | null
+  acknowledgedAt: { seconds: number } | null
 }
 
 export function useMessages(uid: string | undefined, partnerId: string | undefined) {
