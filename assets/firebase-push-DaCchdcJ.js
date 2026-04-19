@@ -1,4 +1,4 @@
-import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h as ve,m as Se,n as Ae}from"./firebase-core-BkEzHYwZ.js";const X="@firebase/installations",R="0.6.18";/**
+import{r as m,_ as y,C as T,c as D,E as z,o as P,F as Ie,l as S,k as M,v as ke,h as ve,m as Se,n as Ae}from"./firebase-core-BkEzHYwZ.js";const X="@firebase/installations",R="0.6.18";/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -28,7 +28,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const Ne={"missing-app-config-values":'Missing App configuration value: "{$valueName}"',"not-registered":"Firebase Installation is not registered.","installation-not-found":"Firebase Installation not found.","request-failed":'{$requestName} request failed with error "{$serverCode} {$serverStatus}: {$serverMessage}"',"app-offline":"Could not process request. Application offline.","delete-pending-registration":"Can't delete installation while there is a pending registration request."},g=new Y(Oe,Ce,Ne);function te(e){return e instanceof Ie&&e.code.includes("request-failed")}/**
+ */const Ne={"missing-app-config-values":'Missing App configuration value: "{$valueName}"',"not-registered":"Firebase Installation is not registered.","installation-not-found":"Firebase Installation not found.","request-failed":'{$requestName} request failed with error "{$serverCode} {$serverStatus}: {$serverMessage}"',"app-offline":"Could not process request. Application offline.","delete-pending-registration":"Can't delete installation while there is a pending registration request."},g=new z(Oe,Ce,Ne);function te(e){return e instanceof Ie&&e.code.includes("request-failed")}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -43,7 +43,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */function ne({projectId:e}){return`${Ee}/projects/${e}/installations`}function oe(e){return{token:e.token,requestStatus:2,expiresIn:Pe(e.expiresIn),creationTime:Date.now()}}async function ie(e,t){const o=(await t.json()).error;return g.create("request-failed",{requestName:e,serverCode:o.code,serverMessage:o.message,serverStatus:o.status})}function re({apiKey:e}){return new Headers({"Content-Type":"application/json",Accept:"application/json","x-goog-api-key":e})}function De(e,{refreshToken:t}){const n=re(e);return n.append("Authorization",Re(t)),n}async function ae(e){const t=await e();return t.status>=500&&t.status<600?e():t}function Pe(e){return Number(e.replace("s","000"))}function Re(e){return`${ee} ${e}`}/**
+ */function ne({projectId:e}){return`${Ee}/projects/${e}/installations`}function oe(e){return{token:e.token,requestStatus:2,expiresIn:Pe(e.expiresIn),creationTime:Date.now()}}async function ie(e,t){const o=(await t.json()).error;return g.create("request-failed",{requestName:e,serverCode:o.code,serverMessage:o.message,serverStatus:o.status})}function re({apiKey:e}){return new Headers({"Content-Type":"application/json",Accept:"application/json","x-goog-api-key":e})}function De(e,{refreshToken:t}){const n=re(e);return n.append("Authorization",Me(t)),n}async function ae(e){const t=await e();return t.status>=500&&t.status<600?e():t}function Pe(e){return Number(e.replace("s","000"))}function Me(e){return`${ee} ${e}`}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -58,7 +58,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function Me({appConfig:e,heartbeatServiceProvider:t},{fid:n}){const o=ne(e),i=re(e),r=t.getImmediate({optional:!0});if(r){const u=await r.getHeartbeatsHeader();u&&i.append("x-firebase-client",u)}const a={fid:n,authVersion:ee,appId:e.appId,sdkVersion:Z},c={method:"POST",headers:i,body:JSON.stringify(a)},f=await ae(()=>fetch(o,c));if(f.ok){const u=await f.json();return{fid:u.fid||n,registrationStatus:2,refreshToken:u.refreshToken,authToken:oe(u.authToken)}}else throw await ie("Create Installation",f)}/**
+ */async function Re({appConfig:e,heartbeatServiceProvider:t},{fid:n}){const o=ne(e),i=re(e),r=t.getImmediate({optional:!0});if(r){const u=await r.getHeartbeatsHeader();u&&i.append("x-firebase-client",u)}const a={fid:n,authVersion:ee,appId:e.appId,sdkVersion:Z},c={method:"POST",headers:i,body:JSON.stringify(a)},f=await ae(()=>fetch(o,c));if(f.ok){const u=await f.json();return{fid:u.fid||n,registrationStatus:2,refreshToken:u.refreshToken,authToken:oe(u.authToken)}}else throw await ie("Create Installation",f)}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -148,7 +148,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const Ve="firebase-installations-database",Be=1,w="firebase-installations-store";let A=null;function M(){return A||(A=P(Ve,Be,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(w)}}})),A}async function I(e,t){const n=k(e),i=(await M()).transaction(w,"readwrite"),r=i.objectStore(w),a=await r.get(n);return await r.put(t,n),await i.done,(!a||a.fid!==t.fid)&&ue(e,t.fid),t}async function fe(e){const t=k(e),o=(await M()).transaction(w,"readwrite");await o.objectStore(w).delete(t),await o.done}async function v(e,t){const n=k(e),i=(await M()).transaction(w,"readwrite"),r=i.objectStore(w),a=await r.get(n),c=t(a);return c===void 0?await r.delete(n):await r.put(c,n),await i.done,c&&(!a||a.fid!==c.fid)&&ue(e,c.fid),c}/**
+ */const Ve="firebase-installations-database",Be=1,w="firebase-installations-store";let A=null;function j(){return A||(A=P(Ve,Be,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(w)}}})),A}async function I(e,t){const n=k(e),i=(await j()).transaction(w,"readwrite"),r=i.objectStore(w),a=await r.get(n);return await r.put(t,n),await i.done,(!a||a.fid!==t.fid)&&ue(e,t.fid),t}async function fe(e){const t=k(e),o=(await j()).transaction(w,"readwrite");await o.objectStore(w).delete(t),await o.done}async function v(e,t){const n=k(e),i=(await j()).transaction(w,"readwrite"),r=i.objectStore(w),a=await r.get(n),c=t(a);return c===void 0?await r.delete(n):await r.put(c,n),await i.done,c&&(!a||a.fid!==c.fid)&&ue(e,c.fid),c}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -163,7 +163,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function j(e){let t;const n=await v(e.appConfig,o=>{const i=He(o),r=We(e,i);return t=r.registrationPromise,r.installationEntry});return n.fid===N?{installationEntry:await t}:{installationEntry:n,registrationPromise:t}}function He(e){const t=e||{fid:Ke(),registrationStatus:0};return pe(t)}function We(e,t){if(t.registrationStatus===0){if(!navigator.onLine){const i=Promise.reject(g.create("app-offline"));return{installationEntry:t,registrationPromise:i}}const n={fid:t.fid,registrationStatus:1,registrationTime:Date.now()},o=Ue(e,n);return{installationEntry:n,registrationPromise:o}}else return t.registrationStatus===1?{installationEntry:t,registrationPromise:Ge(e)}:{installationEntry:t}}async function Ue(e,t){try{const n=await Me(e,t);return I(e.appConfig,n)}catch(n){throw te(n)&&n.customData.serverCode===409?await fe(e.appConfig):await I(e.appConfig,{fid:t.fid,registrationStatus:0}),n}}async function Ge(e){let t=await L(e.appConfig);for(;t.registrationStatus===1;)await se(100),t=await L(e.appConfig);if(t.registrationStatus===0){const{installationEntry:n,registrationPromise:o}=await j(e);return o||n}return t}function L(e){return v(e,t=>{if(!t)throw g.create("installation-not-found");return pe(t)})}function pe(e){return Je(e)?{fid:e.fid,registrationStatus:0}:e}function Je(e){return e.registrationStatus===1&&e.registrationTime+Q<Date.now()}/**
+ */async function F(e){let t;const n=await v(e.appConfig,o=>{const i=He(o),r=We(e,i);return t=r.registrationPromise,r.installationEntry});return n.fid===N?{installationEntry:await t}:{installationEntry:n,registrationPromise:t}}function He(e){const t=e||{fid:Ke(),registrationStatus:0};return pe(t)}function We(e,t){if(t.registrationStatus===0){if(!navigator.onLine){const i=Promise.reject(g.create("app-offline"));return{installationEntry:t,registrationPromise:i}}const n={fid:t.fid,registrationStatus:1,registrationTime:Date.now()},o=Ue(e,n);return{installationEntry:n,registrationPromise:o}}else return t.registrationStatus===1?{installationEntry:t,registrationPromise:Ge(e)}:{installationEntry:t}}async function Ue(e,t){try{const n=await Re(e,t);return I(e.appConfig,n)}catch(n){throw te(n)&&n.customData.serverCode===409?await fe(e.appConfig):await I(e.appConfig,{fid:t.fid,registrationStatus:0}),n}}async function Ge(e){let t=await x(e.appConfig);for(;t.registrationStatus===1;)await se(100),t=await x(e.appConfig);if(t.registrationStatus===0){const{installationEntry:n,registrationPromise:o}=await F(e);return o||n}return t}function x(e){return v(e,t=>{if(!t)throw g.create("installation-not-found");return pe(t)})}function pe(e){return Je(e)?{fid:e.fid,registrationStatus:0}:e}function Je(e){return e.registrationStatus===1&&e.registrationTime+Q<Date.now()}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -193,7 +193,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function F(e,t=!1){let n;const o=await v(e.appConfig,r=>{if(!le(r))throw g.create("not-registered");const a=r.authToken;if(!t&&Ze(a))return r;if(a.requestStatus===1)return n=Xe(e,t),r;{if(!navigator.onLine)throw g.create("app-offline");const c=tt(r);return n=Qe(e,c),c}});return n?await n:o.authToken}async function Xe(e,t){let n=await x(e.appConfig);for(;n.authToken.requestStatus===1;)await se(100),n=await x(e.appConfig);const o=n.authToken;return o.requestStatus===0?F(e,t):o}function x(e){return v(e,t=>{if(!le(t))throw g.create("not-registered");const n=t.authToken;return nt(n)?Object.assign(Object.assign({},t),{authToken:{requestStatus:0}}):t})}async function Qe(e,t){try{const n=await Ye(e,t),o=Object.assign(Object.assign({},t),{authToken:n});return await I(e.appConfig,o),n}catch(n){if(te(n)&&(n.customData.serverCode===401||n.customData.serverCode===404))await fe(e.appConfig);else{const o=Object.assign(Object.assign({},t),{authToken:{requestStatus:0}});await I(e.appConfig,o)}throw n}}function le(e){return e!==void 0&&e.registrationStatus===2}function Ze(e){return e.requestStatus===2&&!et(e)}function et(e){const t=Date.now();return t<e.creationTime||e.creationTime+e.expiresIn<t+_e}function tt(e){const t={requestStatus:1,requestTime:Date.now()};return Object.assign(Object.assign({},e),{authToken:t})}function nt(e){return e.requestStatus===1&&e.requestTime+Q<Date.now()}/**
+ */async function K(e,t=!1){let n;const o=await v(e.appConfig,r=>{if(!le(r))throw g.create("not-registered");const a=r.authToken;if(!t&&Ze(a))return r;if(a.requestStatus===1)return n=Xe(e,t),r;{if(!navigator.onLine)throw g.create("app-offline");const c=tt(r);return n=Qe(e,c),c}});return n?await n:o.authToken}async function Xe(e,t){let n=await V(e.appConfig);for(;n.authToken.requestStatus===1;)await se(100),n=await V(e.appConfig);const o=n.authToken;return o.requestStatus===0?K(e,t):o}function V(e){return v(e,t=>{if(!le(t))throw g.create("not-registered");const n=t.authToken;return nt(n)?Object.assign(Object.assign({},t),{authToken:{requestStatus:0}}):t})}async function Qe(e,t){try{const n=await Ye(e,t),o=Object.assign(Object.assign({},t),{authToken:n});return await I(e.appConfig,o),n}catch(n){if(te(n)&&(n.customData.serverCode===401||n.customData.serverCode===404))await fe(e.appConfig);else{const o=Object.assign(Object.assign({},t),{authToken:{requestStatus:0}});await I(e.appConfig,o)}throw n}}function le(e){return e!==void 0&&e.registrationStatus===2}function Ze(e){return e.requestStatus===2&&!et(e)}function et(e){const t=Date.now();return t<e.creationTime||e.creationTime+e.expiresIn<t+_e}function tt(e){const t={requestStatus:1,requestTime:Date.now()};return Object.assign(Object.assign({},e),{authToken:t})}function nt(e){return e.requestStatus===1&&e.requestTime+Q<Date.now()}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -208,7 +208,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function ot(e){const t=e,{installationEntry:n,registrationPromise:o}=await j(t);return o?o.catch(console.error):F(t).catch(console.error),n.fid}/**
+ */async function ot(e){const t=e,{installationEntry:n,registrationPromise:o}=await F(t);return o?o.catch(console.error):K(t).catch(console.error),n.fid}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -223,7 +223,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function it(e,t=!1){const n=e;return await rt(n),(await F(n,t)).token}async function rt(e){const{registrationPromise:t}=await j(e);t&&await t}/**
+ */async function it(e,t=!1){const n=e;return await rt(n),(await K(n,t)).token}async function rt(e){const{registrationPromise:t}=await F(e);t&&await t}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -268,7 +268,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const ft="/firebase-messaging-sw.js",pt="/firebase-cloud-messaging-push-scope",we="BDOU99-h67HcA6JeFXHbSNMu7e2yNNu3RzoMj8TM4W88jITfq7ZmPvIM1Iv-4_l2LxQcYwhqby2xGpWwzjfAnG4",lt="https://fcmregistrations.googleapis.com/v1",he="google.c.a.c_id",gt="google.c.a.c_l",wt="google.c.a.ts",ht="google.c.a.e",V=1e4;var B;(function(e){e[e.DATA_MESSAGE=1]="DATA_MESSAGE",e[e.DISPLAY_NOTIFICATION=3]="DISPLAY_NOTIFICATION"})(B||(B={}));/**
+ */const ft="/firebase-messaging-sw.js",pt="/firebase-cloud-messaging-push-scope",we="BDOU99-h67HcA6JeFXHbSNMu7e2yNNu3RzoMj8TM4W88jITfq7ZmPvIM1Iv-4_l2LxQcYwhqby2xGpWwzjfAnG4",lt="https://fcmregistrations.googleapis.com/v1",he="google.c.a.c_id",gt="google.c.a.c_l",wt="google.c.a.ts",ht="google.c.a.e",B=1e4;var H;(function(e){e[e.DATA_MESSAGE=1]="DATA_MESSAGE",e[e.DISPLAY_NOTIFICATION=3]="DISPLAY_NOTIFICATION"})(H||(H={}));/**
  * @license
  * Copyright 2018 Google LLC
  *
@@ -311,7 +311,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const _="fcm_token_details_db",mt=5,H="fcm_token_object_Store";async function yt(e){if("databases"in indexedDB&&!(await indexedDB.databases()).map(r=>r.name).includes(_))return null;let t=null;return(await P(_,mt,{upgrade:async(o,i,r,a)=>{var c;if(i<2||!o.objectStoreNames.contains(H))return;const f=a.objectStore(H),u=await f.index("fcmSenderId").get(e);if(await f.clear(),!!u){if(i===2){const s=u;if(!s.auth||!s.p256dh||!s.endpoint)return;t={token:s.fcmToken,createTime:(c=s.createTime)!==null&&c!==void 0?c:Date.now(),subscriptionOptions:{auth:s.auth,p256dh:s.p256dh,endpoint:s.endpoint,swScope:s.swScope,vapidKey:typeof s.vapidKey=="string"?s.vapidKey:p(s.vapidKey)}}}else if(i===3){const s=u;t={token:s.fcmToken,createTime:s.createTime,subscriptionOptions:{auth:p(s.auth),p256dh:p(s.p256dh),endpoint:s.endpoint,swScope:s.swScope,vapidKey:p(s.vapidKey)}}}else if(i===4){const s=u;t={token:s.fcmToken,createTime:s.createTime,subscriptionOptions:{auth:p(s.auth),p256dh:p(s.p256dh),endpoint:s.endpoint,swScope:s.swScope,vapidKey:p(s.vapidKey)}}}}}})).close(),await S(_),await S("fcm_vapid_details_db"),await S("undefined"),Tt(t)?t:null}function Tt(e){if(!e||!e.subscriptionOptions)return!1;const{subscriptionOptions:t}=e;return typeof e.createTime=="number"&&e.createTime>0&&typeof e.token=="string"&&e.token.length>0&&typeof t.auth=="string"&&t.auth.length>0&&typeof t.p256dh=="string"&&t.p256dh.length>0&&typeof t.endpoint=="string"&&t.endpoint.length>0&&typeof t.swScope=="string"&&t.swScope.length>0&&typeof t.vapidKey=="string"&&t.vapidKey.length>0}/**
+ */const _="fcm_token_details_db",mt=5,W="fcm_token_object_Store";async function yt(e){if("databases"in indexedDB&&!(await indexedDB.databases()).map(r=>r.name).includes(_))return null;let t=null;return(await P(_,mt,{upgrade:async(o,i,r,a)=>{var c;if(i<2||!o.objectStoreNames.contains(W))return;const f=a.objectStore(W),u=await f.index("fcmSenderId").get(e);if(await f.clear(),!!u){if(i===2){const s=u;if(!s.auth||!s.p256dh||!s.endpoint)return;t={token:s.fcmToken,createTime:(c=s.createTime)!==null&&c!==void 0?c:Date.now(),subscriptionOptions:{auth:s.auth,p256dh:s.p256dh,endpoint:s.endpoint,swScope:s.swScope,vapidKey:typeof s.vapidKey=="string"?s.vapidKey:p(s.vapidKey)}}}else if(i===3){const s=u;t={token:s.fcmToken,createTime:s.createTime,subscriptionOptions:{auth:p(s.auth),p256dh:p(s.p256dh),endpoint:s.endpoint,swScope:s.swScope,vapidKey:p(s.vapidKey)}}}else if(i===4){const s=u;t={token:s.fcmToken,createTime:s.createTime,subscriptionOptions:{auth:p(s.auth),p256dh:p(s.p256dh),endpoint:s.endpoint,swScope:s.swScope,vapidKey:p(s.vapidKey)}}}}}})).close(),await S(_),await S("fcm_vapid_details_db"),await S("undefined"),Tt(t)?t:null}function Tt(e){if(!e||!e.subscriptionOptions)return!1;const{subscriptionOptions:t}=e;return typeof e.createTime=="number"&&e.createTime>0&&typeof e.token=="string"&&e.token.length>0&&typeof t.auth=="string"&&t.auth.length>0&&typeof t.p256dh=="string"&&t.p256dh.length>0&&typeof t.endpoint=="string"&&t.endpoint.length>0&&typeof t.swScope=="string"&&t.swScope.length>0&&typeof t.vapidKey=="string"&&t.vapidKey.length>0}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -326,7 +326,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const It="firebase-messaging-database",kt=1,b="firebase-messaging-store";let O=null;function be(){return O||(O=P(It,kt,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(b)}}})),O}async function vt(e){const t=me(e),o=await(await be()).transaction(b).objectStore(b).get(t);if(o)return o;{const i=await yt(e.appConfig.senderId);if(i)return await K(e,i),i}}async function K(e,t){const n=me(e),i=(await be()).transaction(b,"readwrite");return await i.objectStore(b).put(t,n),await i.done,t}function me({appConfig:e}){return e.appId}/**
+ */const It="firebase-messaging-database",kt=1,b="firebase-messaging-store";let O=null;function be(){return O||(O=P(It,kt,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(b)}}})),O}async function vt(e){const t=me(e),o=await(await be()).transaction(b).objectStore(b).get(t);if(o)return o;{const i=await yt(e.appConfig.senderId);if(i)return await $(e,i),i}}async function $(e,t){const n=me(e),i=(await be()).transaction(b,"readwrite");return await i.objectStore(b).put(t,n),await i.done,t}function me({appConfig:e}){return e.appId}/**
  * @license
  * Copyright 2017 Google LLC
  *
@@ -341,7 +341,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const St={"missing-app-config-values":'Missing App configuration value: "{$valueName}"',"only-available-in-window":"This method is available in a Window context.","only-available-in-sw":"This method is available in a service worker context.","permission-default":"The notification permission was not granted and dismissed instead.","permission-blocked":"The notification permission was not granted and blocked instead.","unsupported-browser":"This browser doesn't support the API's required to use the Firebase SDK.","indexed-db-unsupported":"This browser doesn't support indexedDb.open() (ex. Safari iFrame, Firefox Private Browsing, etc)","failed-service-worker-registration":"We are unable to register the default service worker. {$browserErrorMessage}","token-subscribe-failed":"A problem occurred while subscribing the user to FCM: {$errorInfo}","token-subscribe-no-token":"FCM returned no token when subscribing the user to push.","token-unsubscribe-failed":"A problem occurred while unsubscribing the user from FCM: {$errorInfo}","token-update-failed":"A problem occurred while updating the user from FCM: {$errorInfo}","token-update-no-token":"FCM returned no token when updating the user to push.","use-sw-after-get-token":"The useServiceWorker() method may only be called once and must be called before calling getToken() to ensure your service worker is used.","invalid-sw-registration":"The input to useServiceWorker() must be a ServiceWorkerRegistration.","invalid-bg-handler":"The input to setBackgroundMessageHandler() must be a function.","invalid-vapid-key":"The public VAPID key must be a string.","use-vapid-key-after-get-token":"The usePublicVapidKey() method may only be called once and must be called before calling getToken() to ensure your VAPID key is used."},d=new Y("messaging","Messaging",St);/**
+ */const St={"missing-app-config-values":'Missing App configuration value: "{$valueName}"',"only-available-in-window":"This method is available in a Window context.","only-available-in-sw":"This method is available in a service worker context.","permission-default":"The notification permission was not granted and dismissed instead.","permission-blocked":"The notification permission was not granted and blocked instead.","unsupported-browser":"This browser doesn't support the API's required to use the Firebase SDK.","indexed-db-unsupported":"This browser doesn't support indexedDb.open() (ex. Safari iFrame, Firefox Private Browsing, etc)","failed-service-worker-registration":"We are unable to register the default service worker. {$browserErrorMessage}","token-subscribe-failed":"A problem occurred while subscribing the user to FCM: {$errorInfo}","token-subscribe-no-token":"FCM returned no token when subscribing the user to push.","token-unsubscribe-failed":"A problem occurred while unsubscribing the user from FCM: {$errorInfo}","token-update-failed":"A problem occurred while updating the user from FCM: {$errorInfo}","token-update-no-token":"FCM returned no token when updating the user to push.","use-sw-after-get-token":"The useServiceWorker() method may only be called once and must be called before calling getToken() to ensure your service worker is used.","invalid-sw-registration":"The input to useServiceWorker() must be a ServiceWorkerRegistration.","invalid-bg-handler":"The input to setBackgroundMessageHandler() must be a function.","invalid-vapid-key":"The public VAPID key must be a string.","use-vapid-key-after-get-token":"The usePublicVapidKey() method may only be called once and must be called before calling getToken() to ensure your VAPID key is used."},d=new z("messaging","Messaging",St);/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -356,7 +356,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function At(e,t){const n=await q(e),o=ye(t),i={method:"POST",headers:n,body:JSON.stringify(o)};let r;try{r=await(await fetch($(e.appConfig),i)).json()}catch(a){throw d.create("token-subscribe-failed",{errorInfo:a?.toString()})}if(r.error){const a=r.error.message;throw d.create("token-subscribe-failed",{errorInfo:a})}if(!r.token)throw d.create("token-subscribe-no-token");return r.token}async function Et(e,t){const n=await q(e),o=ye(t.subscriptionOptions),i={method:"PATCH",headers:n,body:JSON.stringify(o)};let r;try{r=await(await fetch(`${$(e.appConfig)}/${t.token}`,i)).json()}catch(a){throw d.create("token-update-failed",{errorInfo:a?.toString()})}if(r.error){const a=r.error.message;throw d.create("token-update-failed",{errorInfo:a})}if(!r.token)throw d.create("token-update-no-token");return r.token}async function _t(e,t){const o={method:"DELETE",headers:await q(e)};try{const r=await(await fetch(`${$(e.appConfig)}/${t}`,o)).json();if(r.error){const a=r.error.message;throw d.create("token-unsubscribe-failed",{errorInfo:a})}}catch(i){throw d.create("token-unsubscribe-failed",{errorInfo:i?.toString()})}}function $({projectId:e}){return`${lt}/projects/${e}/registrations`}async function q({appConfig:e,installations:t}){const n=await t.getToken();return new Headers({"Content-Type":"application/json",Accept:"application/json","x-goog-api-key":e.apiKey,"x-goog-firebase-installations-auth":`FIS ${n}`})}function ye({p256dh:e,auth:t,endpoint:n,vapidKey:o}){const i={web:{endpoint:n,auth:t,p256dh:e}};return o!==we&&(i.web.applicationPubKey=o),i}/**
+ */async function At(e,t){const n=await L(e),o=ye(t),i={method:"POST",headers:n,body:JSON.stringify(o)};let r;try{r=await(await fetch(q(e.appConfig),i)).json()}catch(a){throw d.create("token-subscribe-failed",{errorInfo:a?.toString()})}if(r.error){const a=r.error.message;throw d.create("token-subscribe-failed",{errorInfo:a})}if(!r.token)throw d.create("token-subscribe-no-token");return r.token}async function Et(e,t){const n=await L(e),o=ye(t.subscriptionOptions),i={method:"PATCH",headers:n,body:JSON.stringify(o)};let r;try{r=await(await fetch(`${q(e.appConfig)}/${t.token}`,i)).json()}catch(a){throw d.create("token-update-failed",{errorInfo:a?.toString()})}if(r.error){const a=r.error.message;throw d.create("token-update-failed",{errorInfo:a})}if(!r.token)throw d.create("token-update-no-token");return r.token}async function _t(e,t){const o={method:"DELETE",headers:await L(e)};try{const r=await(await fetch(`${q(e.appConfig)}/${t}`,o)).json();if(r.error){const a=r.error.message;throw d.create("token-unsubscribe-failed",{errorInfo:a})}}catch(i){throw d.create("token-unsubscribe-failed",{errorInfo:i?.toString()})}}function q({projectId:e}){return`${lt}/projects/${e}/registrations`}async function L({appConfig:e,installations:t}){const n=await t.getToken();return new Headers({"Content-Type":"application/json",Accept:"application/json","x-goog-api-key":e.apiKey,"x-goog-firebase-installations-auth":`FIS ${n}`})}function ye({p256dh:e,auth:t,endpoint:n,vapidKey:o}){const i={web:{endpoint:n,auth:t,p256dh:e}};return o!==we&&(i.web.applicationPubKey=o),i}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -371,7 +371,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const Ot=10080*60*1e3;async function Ct(e){const t=await Dt(e.swRegistration,e.vapidKey),n={vapidKey:e.vapidKey,swScope:e.swRegistration.scope,endpoint:t.endpoint,auth:p(t.getKey("auth")),p256dh:p(t.getKey("p256dh"))},o=await vt(e.firebaseDependencies);if(o){if(Pt(o.subscriptionOptions,n))return Date.now()>=o.createTime+Ot?Nt(e,{token:o.token,createTime:Date.now(),subscriptionOptions:n}):o.token;try{await _t(e.firebaseDependencies,o.token)}catch(i){console.warn(i)}return W(e.firebaseDependencies,n)}else return W(e.firebaseDependencies,n)}async function Nt(e,t){try{const n=await Et(e.firebaseDependencies,t),o=Object.assign(Object.assign({},t),{token:n,createTime:Date.now()});return await K(e.firebaseDependencies,o),n}catch(n){throw n}}async function W(e,t){const o={token:await At(e,t),createTime:Date.now(),subscriptionOptions:t};return await K(e,o),o.token}async function Dt(e,t){const n=await e.pushManager.getSubscription();return n||e.pushManager.subscribe({userVisibleOnly:!0,applicationServerKey:bt(t)})}function Pt(e,t){const n=t.vapidKey===e.vapidKey,o=t.endpoint===e.endpoint,i=t.auth===e.auth,r=t.p256dh===e.p256dh;return n&&o&&i&&r}/**
+ */const Ot=10080*60*1e3;async function Ct(e){const t=await Dt(e.swRegistration,e.vapidKey),n={vapidKey:e.vapidKey,swScope:e.swRegistration.scope,endpoint:t.endpoint,auth:p(t.getKey("auth")),p256dh:p(t.getKey("p256dh"))},o=await vt(e.firebaseDependencies);if(o){if(Pt(o.subscriptionOptions,n))return Date.now()>=o.createTime+Ot?Nt(e,{token:o.token,createTime:Date.now(),subscriptionOptions:n}):o.token;try{await _t(e.firebaseDependencies,o.token)}catch(i){console.warn(i)}return U(e.firebaseDependencies,n)}else return U(e.firebaseDependencies,n)}async function Nt(e,t){try{const n=await Et(e.firebaseDependencies,t),o=Object.assign(Object.assign({},t),{token:n,createTime:Date.now()});return await $(e.firebaseDependencies,o),n}catch(n){throw n}}async function U(e,t){const o={token:await At(e,t),createTime:Date.now(),subscriptionOptions:t};return await $(e,o),o.token}async function Dt(e,t){const n=await e.pushManager.getSubscription();return n||e.pushManager.subscribe({userVisibleOnly:!0,applicationServerKey:bt(t)})}function Pt(e,t){const n=t.vapidKey===e.vapidKey,o=t.endpoint===e.endpoint,i=t.auth===e.auth,r=t.p256dh===e.p256dh;return n&&o&&i&&r}/**
  * @license
  * Copyright 2020 Google LLC
  *
@@ -386,7 +386,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */function U(e){const t={from:e.from,collapseKey:e.collapse_key,messageId:e.fcmMessageId};return Rt(t,e),Mt(t,e),jt(t,e),t}function Rt(e,t){if(!t.notification)return;e.notification={};const n=t.notification.title;n&&(e.notification.title=n);const o=t.notification.body;o&&(e.notification.body=o);const i=t.notification.image;i&&(e.notification.image=i);const r=t.notification.icon;r&&(e.notification.icon=r)}function Mt(e,t){t.data&&(e.data=t.data)}function jt(e,t){var n,o,i,r,a;if(!t.fcmOptions&&!(!((n=t.notification)===null||n===void 0)&&n.click_action))return;e.fcmOptions={};const c=(i=(o=t.fcmOptions)===null||o===void 0?void 0:o.link)!==null&&i!==void 0?i:(r=t.notification)===null||r===void 0?void 0:r.click_action;c&&(e.fcmOptions.link=c);const f=(a=t.fcmOptions)===null||a===void 0?void 0:a.analytics_label;f&&(e.fcmOptions.analyticsLabel=f)}/**
+ */function G(e){const t={from:e.from,collapseKey:e.collapse_key,messageId:e.fcmMessageId};return Mt(t,e),Rt(t,e),jt(t,e),t}function Mt(e,t){if(!t.notification)return;e.notification={};const n=t.notification.title;n&&(e.notification.title=n);const o=t.notification.body;o&&(e.notification.body=o);const i=t.notification.image;i&&(e.notification.image=i);const r=t.notification.icon;r&&(e.notification.icon=r)}function Rt(e,t){t.data&&(e.data=t.data)}function jt(e,t){var n,o,i,r,a;if(!t.fcmOptions&&!(!((n=t.notification)===null||n===void 0)&&n.click_action))return;e.fcmOptions={};const c=(i=(o=t.fcmOptions)===null||o===void 0?void 0:o.link)!==null&&i!==void 0?i:(r=t.notification)===null||r===void 0?void 0:r.click_action;c&&(e.fcmOptions.link=c);const f=(a=t.fcmOptions)===null||a===void 0?void 0:a.analytics_label;f&&(e.fcmOptions.analyticsLabel=f)}/**
  * @license
  * Copyright 2019 Google LLC
  *
@@ -446,7 +446,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function qt(e){try{e.swRegistration=await navigator.serviceWorker.register(ft,{scope:pt}),e.swRegistration.update().catch(()=>{}),await Lt(e.swRegistration)}catch(t){throw d.create("failed-service-worker-registration",{browserErrorMessage:t?.message})}}async function Lt(e){return new Promise((t,n)=>{const o=setTimeout(()=>n(new Error(`Service worker not registered after ${V} ms`)),V),i=e.installing||e.waiting;e.active?(clearTimeout(o),t()):i?i.onstatechange=r=>{var a;((a=r.target)===null||a===void 0?void 0:a.state)==="activated"&&(i.onstatechange=null,clearTimeout(o),t())}:(clearTimeout(o),n(new Error("No incoming service worker found.")))})}/**
+ */async function qt(e){try{e.swRegistration=await navigator.serviceWorker.register(ft,{scope:pt}),e.swRegistration.update().catch(()=>{}),await Lt(e.swRegistration)}catch(t){throw d.create("failed-service-worker-registration",{browserErrorMessage:t?.message})}}async function Lt(e){return new Promise((t,n)=>{const o=setTimeout(()=>n(new Error(`Service worker not registered after ${B} ms`)),B),i=e.installing||e.waiting;e.active?(clearTimeout(o),t()):i?i.onstatechange=r=>{var a;((a=r.target)===null||a===void 0?void 0:a.state)==="activated"&&(i.onstatechange=null,clearTimeout(o),t())}:(clearTimeout(o),n(new Error("No incoming service worker found.")))})}/**
  * @license
  * Copyright 2020 Google LLC
  *
@@ -521,7 +521,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */async function Wt(e,t){const n=t.data;if(!n.isFirebaseMessaging)return;e.onMessageHandler&&n.messageType===h.PUSH_RECEIVED&&(typeof e.onMessageHandler=="function"?e.onMessageHandler(U(n)):e.onMessageHandler.next(U(n)));const o=n.data;Ft(o)&&o[ht]==="1"&&await Bt(e,n.messageType,o)}const G="@firebase/messaging",J="0.12.22";/**
+ */async function Wt(e,t){const n=t.data;if(!n.isFirebaseMessaging)return;e.onMessageHandler&&n.messageType===h.PUSH_RECEIVED&&(typeof e.onMessageHandler=="function"?e.onMessageHandler(G(n)):e.onMessageHandler.next(G(n)));const o=n.data;Ft(o)&&o[ht]==="1"&&await Bt(e,n.messageType,o)}const J="@firebase/messaging",Y="0.12.22";/**
  * @license
  * Copyright 2020 Google LLC
  *
@@ -536,7 +536,7 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */const Ut=e=>{const t=new $t(e.getProvider("app").getImmediate(),e.getProvider("installations-internal").getImmediate(),e.getProvider("analytics-internal"));return navigator.serviceWorker.addEventListener("message",n=>Wt(t,n)),t},Gt=e=>{const t=e.getProvider("messaging").getImmediate();return{getToken:o=>Te(t,o)}};function Jt(){y(new T("messaging",Ut,"PUBLIC")),y(new T("messaging-internal",Gt,"PRIVATE")),m(G,J),m(G,J,"esm2017")}/**
+ */const Ut=e=>{const t=new $t(e.getProvider("app").getImmediate(),e.getProvider("installations-internal").getImmediate(),e.getProvider("analytics-internal"));return navigator.serviceWorker.addEventListener("message",n=>Wt(t,n)),t},Gt=e=>{const t=e.getProvider("messaging").getImmediate();return{getToken:o=>Te(t,o)}};function Jt(){y(new T("messaging",Ut,"PUBLIC")),y(new T("messaging-internal",Gt,"PRIVATE")),m(J,Y),m(J,Y,"esm2017")}/**
  * @license
  * Copyright 2020 Google LLC
  *
@@ -553,6 +553,21 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * limitations under the License.
  */async function Yt(){try{await ke()}catch{return!1}return typeof window<"u"&&ve()&&Se()&&"serviceWorker"in navigator&&"PushManager"in window&&"Notification"in window&&"fetch"in window&&ServiceWorkerRegistration.prototype.hasOwnProperty("showNotification")&&PushSubscription.prototype.hasOwnProperty("getKey")}/**
  * @license
+ * Copyright 2020 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */function zt(e,t){if(!navigator)throw d.create("only-available-in-window");return e.onMessageHandler=t,()=>{e.onMessageHandler=null}}/**
+ * @license
  * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -566,4 +581,4 @@ import{r as m,_ as y,C as T,c as D,E as Y,o as P,F as Ie,l as S,k as z,v as ke,h
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */function Xt(e=Ae()){return Yt().then(t=>{if(!t)throw d.create("unsupported-browser")},t=>{throw d.create("indexed-db-unsupported")}),D(z(e),"messaging").getImmediate()}async function Qt(e,t){return e=z(e),Te(e,t)}Jt();export{Qt as a,Xt as g,Yt as i};
+ */function Qt(e=Ae()){return Yt().then(t=>{if(!t)throw d.create("unsupported-browser")},t=>{throw d.create("indexed-db-unsupported")}),D(M(e),"messaging").getImmediate()}async function Zt(e,t){return e=M(e),Te(e,t)}function en(e,t){return e=M(e),zt(e,t)}Jt();export{Zt as a,Qt as g,Yt as i,en as o};
